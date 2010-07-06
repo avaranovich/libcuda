@@ -1,0 +1,35 @@
+﻿Device #0 "GeForce GTX 260" (/pci:1/dev:0)
+    ALU                                : 27 multiprocessors (216 cores)
+    SIMD Width                         : 32 threads in warp
+    ALU clock                          : 1,41 GHz
+    Registers (per multiprocessor)     : 16384 x 32 bits
+    Shared memory (per multiprocessor) : 16384 bytes
+    Constant memory (device-wide)      : 65536 bytes
+    Global memory (device-wide)        : 939196416 bytes
+    Max pitch                          : 2147483647 bytes
+    Texture alignment                  : 256 bytes
+    Max texture 1d (W)                 : 8192
+    Max texture 2d (W x H)             : 65536 x 32768
+    Max texture 3d (W x H x D)         : 2048 x 2048 x 2048
+    Max texture 2d array (W x H)       : 8192 x 32768
+    Max texture 2d array splices       : 512
+    Surface alignment                  : 512 bytes
+    Compute capability                 : 1.3
+    Max threads in block               : 512
+    Max block size (X x Y x Z)         : 512 x 512 x 64
+    Max grid size (X x Y x Z)          : 65535 x 65535 x 1
+    Max pitch                          : 2147483647 bytes
+    Texture alignment                  : 256 bytes
+    Max texture 1d (W)                 : 8192
+    Max texture 2d (W x H)             : 65536 x 32768
+    Max texture 3d (W x H x D)         : 2048 x 2048 x 2048
+    Max texture 2d array (W x H)       : 8192 x 32768
+    Max texture 2d array splices       : 512
+    Surface alignment                  : 512 bytes
+    Compute mode                       : Default
+    Is integrated                      : False
+    Is kernel timeout enabled          : True
+    Supports host memory mapping       : True
+    Supports GPU overlap               : True
+    Supports concurrent kernels        : False
+    Is ECC enabled                     : False

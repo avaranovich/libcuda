@@ -1,0 +1,26 @@
+﻿todo list for the Libcuda library:
+
+1) Finalizers cannot call nvcuda, since they run on another thread =(
+3) Implement robust error handling:
+  * When calling nvcuda.dll APIs check that the ctx has been created
+    so that we don't get "201 Invalid Context" but rather recreate the ctx
+  * Provide a special exception (ala PtxCompilationException)
+    that would provide details why the context was unable to be created
+    one of the possible reasons would be DllNotFoundException
+  * Catch CUDA exceptions and dispose of managed resources (especially in JittedKernel).
+  * Test everything again so that we never leak managed object.
+4) Trace literally everything (ala how it is done in Prjinit)
+5) Provide capability to configure tracing within this library
+6) Check how this stuff works for 64-bit (especially low-level allocations performed by cuModuleLoadDataExOptions)
+7) Make sure that there are no concurrent calls to KernelFunction since cuParamSetXXX have only one slot per function!
+8) State somewhere obviously that we're not thread-safe!
+9) Check whether index space fits hardware max dimensions.
+   Otherwise, CUDA driver will do it for ourselves and will crash without specifying any reason.
+10) Cache jitted ptx.
+    This means that clients of that API must not dispose of JittedKernel manually
+    However, if an exception gets thrown, the kernel must be disposed of, obviously
+11) Think about contexts!
+12) Mirror CUresult with a high-level concept that also has code "-1" => no driver
+13) Exceptions: CudaException (return high-level concept from #12), JitException, what's more?
+14) Implement thread affinity for high-level concepts!
+15) Segregate trace sources for Libcuda.

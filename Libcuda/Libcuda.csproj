@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -46,7 +47,72 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CudaVersions.cs" />
+    <Compile Include="DataTypes\Classifier.cs" />
+    <Compile Include="DataTypes\Dim3.cs" />
+    <Compile Include="DataTypes\Vectors.F32.cs" />
+    <Compile Include="DataTypes\Vectors.F64.cs" />
+    <Compile Include="DataTypes\Vectors.S32.cs" />
+    <Compile Include="DataTypes\Vectors.S64.cs" />
+    <Compile Include="DataTypes\Vectors.U32.cs" />
+    <Compile Include="DataTypes\Vectors.U64.cs" />
+    <Compile Include="Devices\ClockSpec.cs" />
+    <Compile Include="Devices\ComputeMode.cs" />
+    <Compile Include="Devices\CudaDevice.Core.cs" />
+    <Compile Include="Devices\CudaDevice.Current.cs" />
+    <Compile Include="CudaDevices.cs" />
+    <Compile Include="Devices\DeviceCaps.cs" />
+    <Compile Include="Devices\FloatCaps.cs" />
+    <Compile Include="Devices\GridCaps.cs" />
+    <Compile Include="Devices\MemoryCaps.cs" />
+    <Compile Include="Devices\MemorySpec.cs" />
+    <Compile Include="Devices\SimdSpec.cs" />
+    <Compile Include="Jit\JitCompiler.cs" />
+    <Compile Include="Jit\JitException.cs" />
+    <Compile Include="Jit\JitResult.cs" />
+    <Compile Include="Jit\JittedFunction.cs" />
+    <Compile Include="Jit\JittedModule.cs" />
+    <Compile Include="Run\KernelArgument.Fill.cs" />
+    <Compile Include="Run\KernelArgument.Core.cs" />
+    <Compile Include="Run\KernelArgument.Init.cs" />
+    <Compile Include="Run\KernelArgumentHelper.cs" />
+    <Compile Include="Run\KernelArguments.cs" />
+    <Compile Include="Run\KernelInvocation.cs" />
+    <Compile Include="Run\KernelResult.cs" />
+    <Compile Include="Run\ParameterDirection.cs" />
+    <Compile Include="JitFacade.cs" />
+    <Compile Include="Jit\JittedKernel.cs" />
+    <Compile Include="Native\DataTypes\CUcomputemode.cs" />
+    <Compile Include="Native\DataTypes\CUdevice.cs" />
+    <Compile Include="Native\DataTypes\CUdeviceptr.cs" />
+    <Compile Include="Native\DataTypes\CUdevice_attribute.cs" />
+    <Compile Include="Native\DataTypes\CUevent.cs" />
+    <Compile Include="Native\DataTypes\CUevent_flags.cs" />
+    <Compile Include="Native\DataTypes\CUfunction.cs" />
+    <Compile Include="Native\DataTypes\CUfunction_attribute.cs" />
+    <Compile Include="Native\DataTypes\CUfunc_cache.cs" />
+    <Compile Include="Native\DataTypes\CUjit_fallbackstrategy.cs" />
+    <Compile Include="Native\DataTypes\CUjit_option.cs" />
+    <Compile Include="Native\DataTypes\CUjit_target.cs" />
+    <Compile Include="Native\DataTypes\CUmodule.cs" />
+    <Compile Include="Native\Exceptions\CUresult.cs" />
+    <Compile Include="Native\DataTypes\CUstream.cs" />
+    <Compile Include="Native\Exceptions\CudaException.cs" />
+    <Compile Include="Native\nvcuda.device.cs" />
+    <Compile Include="Native\nvcuda.events.cs" />
+    <Compile Include="Native\nvcuda.exec.cs" />
+    <Compile Include="Native\nvcuda.init.cs" />
+    <Compile Include="Native\nvcuda.mem.cs" />
+    <Compile Include="Native\nvcuda.module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Versions\CudaVersion.cs" />
+    <Compile Include="Versions\HardwareIsa.cs" />
+    <Compile Include="Versions\SoftwareIsa.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="todo.txt" />
+    <Content Include="Native\Reference\cuda.h" />
+    <Content Include="Native\Reference\readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
