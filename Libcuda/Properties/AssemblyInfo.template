@@ -1,0 +1,22 @@
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using XenoGears.Versioning;
+
+[assembly: AssemblyProduct("Libcuda")]
+[assembly: AssemblyTitle("Libcuda (" +
+    "built from $"CODEBASE"$ (rev=$REVISION$, hash=$CODEHASH$), " +
+    "built at $TIMESTAMP$, " +
+    "built by $USERHASH$, " +
+    "built on $MACHINEHASH$)")]
+[assembly: AssemblyCopyright("Copyright © 2010 xeno.by")]
+
+[assembly: ComVisible(false)]
+[assembly: InternalsVisibleTo("Libcuda.Playground")]
+
+[assembly: Guid("DE888EF0-78FA-4CB2-88C8-0180A3D7F523")]
+[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyBuiltFrom(Repository = "$"CODEBASE"$", Revision = "$REVISION$", CodebaseHash = "$CODEHASH$")]
+[assembly: AssemblyBuiltAt(Timestamp = "$TIMESTAMP$")]
+[assembly: AssemblyBuiltBy(UserHash = "$USERHASH$")]
+[assembly: AssemblyBuiltOn(MachineHash = "$MACHINEHASH$")]
