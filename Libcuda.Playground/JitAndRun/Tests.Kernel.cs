@@ -18,6 +18,10 @@ namespace Libcuda.Playground.JitAndRun
             var ptx = LoadPtxFromResources();
             using (var jitted = ptx.JitKernel(blockDim))
             {
+                // todo. that's an untidy way to invoke a kernel
+                // since it doesn't dispose of invocation parameters
+                // neither it is shielded against partial initialization issues
+
                 var c = new float[a.Height(), b.Width()];
                 using (var result = jitted.Run(gridDim, blockDim,
                     a.Width().In(), a.Height().In(), a.In(),

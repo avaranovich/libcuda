@@ -19,9 +19,15 @@ namespace Libcuda.Api.Native
         // this context is global to all users of this assembly instance
         // and has a lifetime of the entire application (this is created on-demand)
         //
+        // note. this means that so far Libcuda is effectively single-threaded
         // in future it might be necessary to support different contexts
         // e.g. to use multiple devices or to service multiple clients at once
         // but for now I use the simplest option possible
+        //
+        // note. if you decide to make Libcuda multi-threaded
+        // you must also insert affinity checks for high-level objects
+        // so that they don't accidentally get accessed from an erroneous thread
+        // CUDA driver checks this anyways, but we should provide high-level checks too
 
         private static GlobalContext _ctx;
         private static int _affinity;

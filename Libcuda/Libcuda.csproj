@@ -124,7 +124,6 @@
     <Compile Include="Versions\SoftwareIsa.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="todo.txt" />
     <Content Include="Api\Native\Reference\cuda.h" />
     <Content Include="Api\Native\Reference\readme.txt" />
   </ItemGroup>

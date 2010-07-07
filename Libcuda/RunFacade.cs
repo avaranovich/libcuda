@@ -7,6 +7,9 @@ using Libcuda.DataTypes;
 
 namespace Libcuda
 {
+    // todo. think better about run API
+    // currently it's very tedious to use it correctly (i.e. to guarantee zero leaks)
+
     [DebuggerNonUserCode]
     public static class RunFacade
     {
