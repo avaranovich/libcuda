@@ -57,7 +57,7 @@ namespace Libcuda.Api.Native
                 else
                 {
                     (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
-                    Log.WriteLine("Successfully linked to {0} {1} (CUDA {2}.{3}).",
+                    Log.WriteLine("Successfully linked to {0} v{1} (CUDA {2}.{3}).",
                         CudaDriver.Name,
                         CudaDriver.Version,
                         (int)cudaVersion / 1000, (int)cudaVersion % 100);
@@ -90,12 +90,8 @@ namespace Libcuda.Api.Native
 
             ~GlobalContext()
             {
-                if (_ctx.Handle != IntPtr.Zero)
-                {
-                    // todo. here we've got a resource leak
-                    // finalizers cannot call nvcuda, since they run on another thread
-                    cuCtxDestroy(_ctx);
-                }
+                // todo. here we've got a resource leak
+                // finalizers cannot call nvcuda, since they run on a different thread
             }
         }
 

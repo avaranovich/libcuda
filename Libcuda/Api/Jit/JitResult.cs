@@ -40,8 +40,12 @@ namespace Libcuda.Api.Jit
 
             if (Module != null)
             {
-                Log.WriteLine(result.InfoLog);
-                Log.WriteLine();
+                if (result.InfoLog.IsNeitherNullNorEmpty())
+                {
+                    Log.WriteLine(result.InfoLog);
+                    Log.WriteLine();
+                }
+
                 Log.WriteLine("JIT compilation succeeded in {0} and produced 0x{1}.", CompilationWallTime, Module);
                 Log.WriteLine();
 
@@ -62,8 +66,12 @@ namespace Libcuda.Api.Jit
             }
             else
             {
-                Log.WriteLine(result.InfoLog);
-                Log.WriteLine();
+                if (result.InfoLog.IsNeitherNullNorEmpty())
+                {
+                    Log.WriteLine(result.InfoLog);
+                    Log.WriteLine();
+                }
+
                 Log.WriteLine("JIT compilation failed in {0}.", CompilationWallTime);
                 Log.WriteLine();
             }
