@@ -7,6 +7,7 @@ using Libcuda.Api.Run;
 using Libcuda.DataTypes;
 using XenoGears.Assertions;
 using XenoGears.Traits.Disposable;
+using XenoGears.Functional;
 
 namespace Libcuda.Api.Jit
 {
@@ -17,6 +18,7 @@ namespace Libcuda.Api.Jit
         public CUfunction Handle { get; private set; }
         public static implicit operator CUfunction(JittedFunction fun) { return fun == null ? CUfunction.Null : fun.Handle; }
         public static explicit operator JittedFunction(CUfunction fun) { return fun.IsNull ? null : new JittedFunction(fun); }
+        public override String ToString() { var emptyName = Name.IsNullOrEmpty() || Name == "N/A"; return emptyName ? Handle.ToString() : String.Format("{0} ({1})", Name, Handle); }
 
         public int MaxThreadsPerBlock { get; private set; }
         public int SharedSizeBytes { get; private set; }

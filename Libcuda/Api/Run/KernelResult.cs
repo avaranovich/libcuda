@@ -6,12 +6,11 @@ using Libcuda.Api.Native.DataTypes;
 using XenoGears.Assertions;
 using System.Linq;
 using XenoGears.Functional;
-using XenoGears.Traits.Disposable;
 
 namespace Libcuda.Api.Run
 {
     [DebuggerNonUserCode]
-    public class KernelResult : Disposable, IDictionary<int, Object>
+    public class KernelResult : IDictionary<int, Object>
     {
         private readonly KernelInvocation _invocation;
         public CUelapsed_time WallTime { get; private set; }
@@ -162,11 +161,6 @@ namespace Libcuda.Api.Run
                 value = _invocation.Args.Nth(key).Result;
                 return true;
             }
-        }
-
-        protected override void DisposeManagedResources()
-        {
-            _invocation.Dispose();
         }
     }
 }

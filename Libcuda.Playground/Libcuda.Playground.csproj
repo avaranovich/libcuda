@@ -88,13 +88,12 @@
     <EmbeddedResource Include="DevicesAndVersions\Reference\Gtx260" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="JitAndRun\Reference\SmallTest" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="JitAndRun\Reference\MediumTest" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="JitAndRun\Reference\BigTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_MediumTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_Fast_SmallTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_Fast_BigTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_Fast_MediumTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_BigTest" />
+    <EmbeddedResource Include="JitAndRun\Reference\MatMul_SmallTest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

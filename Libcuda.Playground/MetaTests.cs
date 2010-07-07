@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
 using XenoGears.Functional;
+using XenoGears.Logging;
 using XenoGears.Reflection;
 using XenoGears.Reflection.Attributes;
 using XenoGears.Reflection.Generics;
@@ -29,7 +30,7 @@ namespace Libcuda.Playground
 
             if (failed_types.IsNotEmpty())
             {
-                Trace.WriteLine(String.Format("{0} types in Libcuda aren't marked with [DebuggerNonUserCode]:", failed_types.Count()));
+                Log.WriteLine(String.Format("{0} types in Libcuda aren't marked with [DebuggerNonUserCode]:", failed_types.Count()));
                 var messages = failed_types.Select(t => t.GetCSharpRef(ToCSharpOptions.InformativeWithNamespaces));
                 messages.OrderDescending().ForEach(message => Trace.WriteLine(message));
                 Assert.Fail();

@@ -23,14 +23,11 @@ namespace Libcuda.Playground.JitAndRun
                 // neither it is shielded against partial initialization issues
 
                 var c = new float[a.Height(), b.Width()];
-                using (var result = jitted.Run(gridDim, blockDim,
+                var c_result = jitted.Invoke(gridDim, blockDim,
                     a.Width().In(), a.Height().In(), a.In(),
                     b.Width().In(), b.Height().In(), b.In(),
-                    c.Width().In(), c.Height().In(), c.Out()))
-                {
-                    var c_result = result.Result;
-                    return (float[,])c_result;
-                }
+                    c.Width().In(), c.Height().In(), c.Out());
+                return (float[,])c_result;
             }
         }
 

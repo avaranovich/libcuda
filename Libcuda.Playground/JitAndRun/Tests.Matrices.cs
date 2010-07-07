@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using XenoGears.Assertions;
 using XenoGears.Functional;
 using XenoGears.Logging;
@@ -27,7 +28,7 @@ namespace Libcuda.Playground.JitAndRun
 
         private void PrintMatrix(String headline, float[,] m)
         {
-            Log.Write(headline + Environment.NewLine + m.StringJoin() + Environment.NewLine);
+            Trace.Write(headline + Environment.NewLine + m.StringJoin() + Environment.NewLine);
         }
 
         private void AssertAreTheSame(float[,] a, float[,] b)
@@ -47,12 +48,12 @@ namespace Libcuda.Playground.JitAndRun
             }))() : false;
             if (!areTheSame)
             {
-                Log.WriteLine("*".Repeat(120));
-                Log.WriteLine("ERROR! Calculated matrix ain't equal to reference result.");
-                Log.WriteLine();
+                Trace.WriteLine("*".Repeat(120));
+                Trace.WriteLine("ERROR! Calculated matrix ain't equal to reference result.");
+                Trace.WriteLine(String.Empty);
 
                 PrintMatrix("Expected: ", a);
-                Log.WriteLine();
+                Trace.WriteLine(String.Empty);
                 PrintMatrix("Actual: ", b);
                 AssertionHelper.Fail();
             }

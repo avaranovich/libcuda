@@ -46,7 +46,7 @@ namespace Libcuda.Api.Jit
                     Log.WriteLine();
                 }
 
-                Log.WriteLine("JIT compilation succeeded in {0} and produced 0x{1}.", CompilationWallTime, Module);
+                Log.WriteLine("JIT compilation succeeded in {0} and produced {1}.", CompilationWallTime, Module);
                 Log.WriteLine();
 
                 Log.WriteLine("Loading entry points of {0}...", Module);

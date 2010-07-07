@@ -20,6 +20,7 @@ namespace Libcuda.Api.Jit
         public CUmodule Handle { get; private set; }
         public ReadOnlyCollection<JittedFunction> Functions { get; private set; }
         public static implicit operator CUmodule(JittedModule mod) { return mod == null ? CUmodule.Null : mod.Handle; }
+        public override String ToString() { return Handle.ToString(); }
 
         public JittedModule(JitResult jitResult, CUmodule handle)
             : this(jitResult.Ptx, handle)

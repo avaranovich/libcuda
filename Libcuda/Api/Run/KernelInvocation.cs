@@ -10,26 +10,25 @@ using XenoGears.Assertions;
 using XenoGears.Functional;
 using XenoGears.Reflection.Simple;
 using XenoGears.Strings;
-using XenoGears.Traits.Disposable;
 
 namespace Libcuda.Api.Run
 {
     [DebuggerNonUserCode]
-    public class KernelInvocation : Disposable
+    public class KernelInvocation
     {
         public JittedFunction Function { get; private set; }
-        public KernelArguments Args { get; set; }
+        public KernelArguments Args { get; private set; }
         private bool _hasCompletedExecution = false;
 
         public KernelInvocation(JittedFunction function, IEnumerable<KernelArgument> args)
         {
             Function = function;
             Args = new KernelArguments(args);
+            Args.SuppressDispose();
         }
 
         public KernelResult Launch(dim3 gridDim, dim3 blockDim)
         {
-            IsDisposed.AssertFalse();
             Args.AssertNone(p => p.IsDisposed);
             _hasCompletedExecution.AssertFalse();
 
@@ -56,7 +55,7 @@ namespace Libcuda.Api.Run
 
         private void TraceBeforeLaunch(dim3 gridDim, dim3 blockDim)
         {
-            Log.WriteLine("Launching function {0} ({1})...", Function.Name, Function.Handle);
+            Log.WriteLine("Launching function {0}...", Function);
             Log.WriteLine("Grid is configured as {2}: blockdim is {0}, griddim is {1}",
                 blockDim.ToString().Slice(4),
                 gridDim.ToString().Slice(4),

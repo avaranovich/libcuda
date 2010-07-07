@@ -187,8 +187,9 @@ namespace Libcuda.Api.Native
                 yield return Tuple.New(CUjit_option.ErrorLogBuffer, _allocated_errorLogBuffer);
                 yield return Tuple.New(CUjit_option.ErrorLogBufferSizeBytes, _star_allocated_errorLogBufferSizeBytes);
                 yield return Tuple.New(CUjit_option.OptimizationLevel, _star_allocated_optimizationLevel);
-                yield return Tuple.New(CUjit_option.Target, _star_allocated_target);
-                yield return Tuple.New(CUjit_option.FallbackStrategy, _star_allocated_fallbackStrategy);
+//                if (TargetFromContext) yield return Tuple.New(CUjit_option.TargetFromContext, _star_allocated_targetFromContext);
+//                if (!TargetFromContext) yield return Tuple.New(CUjit_option.Target, _star_allocated_target);
+//                yield return Tuple.New(CUjit_option.FallbackStrategy, _star_allocated_fallbackStrategy);
             }
 
             #region Very ugly allocation/deallocation code
