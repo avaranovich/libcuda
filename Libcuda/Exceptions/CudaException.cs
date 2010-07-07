@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Reflection;
-using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using XenoGears.Assertions;
 using XenoGears.Exceptions;
@@ -12,81 +10,68 @@ namespace Libcuda.Exceptions
     [DebuggerNonUserCode]
     public class CudaException : BaseException
     {
-        private readonly CudaError _errorCode;
-        private readonly MethodBase _source;
-        private readonly String _customMessage;
+        public CudaError Error { get; private set; }
+        private readonly String _message;
 
-        public CudaException(CUresult errorCode)
-            : this(errorCode, null, null)
+        public CudaException(CUresult error)
+            : this(error, null, null)
         {
         }
 
-        public CudaException(CudaError errorCode)
-            : this(errorCode, null, null)
+        public CudaException(CudaError error)
+            : this(error, null, null)
         {
         }
 
-        public CudaException(CUresult errorCode, Exception innerException)
-            : this(errorCode, null, innerException)
+        public CudaException(CUresult error, Exception innerException)
+            : this(error, null, innerException)
         {
         }
 
-        public CudaException(CudaError errorCode, Exception innerException)
-            : this(errorCode, null, innerException)
+        public CudaException(CudaError error, Exception innerException)
+            : this(error, null, innerException)
         {
         }
 
-        public CudaException(CUresult errorCode, String customMessage)
-            : this(errorCode, customMessage, null)
+        public CudaException(CUresult error, String message)
+            : this(error, message, null)
         {
         }
 
-        public CudaException(CudaError errorCode, String customMessage)
-            : this(errorCode, customMessage, null)
+        public CudaException(CudaError error, String message)
+            : this(error, message, null)
         {
         }
 
-        public CudaException(CUresult errorCode, String customMessage, Exception innerException)
-            : this((CudaError)errorCode, customMessage, innerException)
+        public CudaException(CUresult error, String message, Exception innerException)
+            : this((CudaError)error, message, innerException)
         {
         }
 
-        public CudaException(CudaError errorCode, String customMessage, Exception innerException)
+        public CudaException(CudaError error, String message, Exception innerException)
             : base(innerException)
         {
-            _errorCode = errorCode.AssertThat(ec => ec != CudaError.Success);
-            var m_caller = new StackTrace().GetFrame(1).GetMethod();
-            var t_caller = m_caller == null ? null : m_caller.DeclaringType;
-            _source = t_caller == typeof(nvcuda) ? m_caller : null;
-            _customMessage = customMessage;
+            Error = error.AssertThat(ec => ec != CudaError.Success);
+            _message = message;
         }
 
         [IncludeInMessage]
-        public override bool IsUnexpected { get { return _errorCode == CudaError.Unknown; } }
+        public override bool IsUnexpected { get { return Error == CudaError.Unknown; } }
 
         [IncludeInMessage]
-        public CudaError Error { get { return _errorCode; } }
-
-        [IncludeInMessage]
-        public int ErrorCode { get { return (int)_errorCode; } }
+        public int ErrorCode { get { return (int)Error; } }
 
         [IncludeInMessage]
         public String ErrorDescription
         {
             get
             {
-                var desc = _errorCode.ToString();
+                var desc = Error.ToString();
                 return desc.CSharpNameToHumanReadableString();
             }
         }
 
         [IncludeInMessage]
-        public override String Source
-        {
-            get { return _source == null ? null : _source.GetCSharpRef(ToCSharpOptions.Informative); }
-        }
-
-        [IncludeInMessage]
-        public String CustomMessage { get { return _customMessage; } }
+        public new String Message { get { return _message; } }
     }
 }

@@ -22,7 +22,8 @@ namespace Libcuda.Api.Jit
         {
             Log.WriteLine("Peforming JIT compilation...");
             Log.WriteLine("    PTX source text                              : {0}", "(see below)");
-            Log.WriteLine("    Hardware ISA                                 : {0}", Target);
+            Log.WriteLine("    Target hardware ISA                          : {0}", Target);
+            Log.WriteLine("    Actual hardware ISA                          : {0}", CudaVersions.HardwareIsa);
             Log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
             Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
             Log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
@@ -47,7 +48,7 @@ namespace Libcuda.Api.Jit
             catch (CUjit_exception jex)
             {
                 var result = new JitResult(this, ptx, jex.JitResult);
-                throw new JitException(result);
+                throw new JitException(result, jex);
             }
         }
     }

@@ -3,7 +3,6 @@ using System.Diagnostics;
 using Libcuda.Exceptions;
 using XenoGears.Exceptions;
 using XenoGears.Assertions;
-using XenoGears.Strings;
 
 namespace Libcuda.Api.Jit
 {
@@ -27,9 +26,9 @@ namespace Libcuda.Api.Jit
         public TimeSpan WallTime { get { return JitResult.CompilationWallTime; } }
 
         [IncludeInMessage]
-        public String InfoLog { get { return Environment.NewLine + JitResult.CompilationInfoLog.Indent(); } }
+        public String InfoLog { get { return JitResult.CompilationInfoLog; } }
 
         [IncludeInMessage]
-        public String ErrorLog { get { return Environment.NewLine + JitResult.CompilationErrorLog.Indent(); } }
+        public String ErrorLog { get { return JitResult.CompilationErrorLog; } }
     }
 }

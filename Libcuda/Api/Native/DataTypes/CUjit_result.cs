@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using XenoGears.Functional;
 
 namespace Libcuda.Api.Native.DataTypes
 {
@@ -13,14 +14,14 @@ namespace Libcuda.Api.Native.DataTypes
         private String _infoLog = String.Empty;
         public String InfoLog
         {
-            get { return _infoLog; }
+            get { return _infoLog.IsNullOrEmpty() ? null : _infoLog; }
             set { _infoLog = (value ?? String.Empty).TrimEnd('\0'); }
         }
 
         private String _errorLog = String.Empty;
         public String ErrorLog
         {
-            get { return _errorLog; }
+            get { return _errorLog.IsNullOrEmpty() ? null : _errorLog; }
             set { _errorLog = (value ?? String.Empty).TrimEnd('\0'); }
         }
     }
