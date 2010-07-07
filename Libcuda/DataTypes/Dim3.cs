@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Libcuda.DataTypes
 {
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct dim3 : IEnumerable<int>, IEquatable<dim3>
     {
         public int X;
@@ -52,6 +54,26 @@ namespace Libcuda.DataTypes
         public static bool operator !=(dim3 left, dim3 right)
         {
             return !left.Equals(right);
+        }
+
+        public static bool operator >(dim3 x, dim3 y)
+        {
+            return x.X > y.X && x.Y > y.Y && x.Z > y.Z;
+        }
+
+        public static bool operator <(dim3 x, dim3 y)
+        {
+            return y > x;
+        }
+
+        public static bool operator >=(dim3 x, dim3 y)
+        {
+            return x.X >= y.X && x.Y >= y.Y && x.Z >= y.Z;
+        }
+
+        public static bool operator <=(dim3 x, dim3 y)
+        {
+            return y >= x;
         }
     }
 }

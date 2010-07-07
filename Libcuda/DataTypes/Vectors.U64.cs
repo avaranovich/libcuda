@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Libcuda.DataTypes
 {
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct ulong1 : IEnumerable<ulong>, IEquatable<ulong1>
     {
         public ulong X;
@@ -45,6 +47,7 @@ namespace Libcuda.DataTypes
     }
 
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct ulong2 : IEnumerable<ulong>, IEquatable<ulong2>
     {
         public ulong X;

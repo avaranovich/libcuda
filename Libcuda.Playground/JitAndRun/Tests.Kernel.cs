@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Libcuda.DataTypes;
-using Libcuda.Run;
+using Libcuda.Api.Run;
 using XenoGears.Assertions;
 using XenoGears.Functional;
 

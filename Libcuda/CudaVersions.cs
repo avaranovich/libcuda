@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using Libcuda.Native;
-using Libcuda.Native.Exceptions;
+using Libcuda.Api.Native;
+using Libcuda.Exceptions;
 using Libcuda.Versions;
 using XenoGears.Assertions;
 
@@ -15,12 +14,7 @@ namespace Libcuda
         {
             get
             {
-                var system_dir = Environment.GetFolderPath(Environment.SpecialFolder.System);
-                var nvcuda_dll = Path.Combine(system_dir, "nvcuda.dll");
-                if (!File.Exists(nvcuda_dll)) return null;
-
-                var fvi = FileVersionInfo.GetVersionInfo(nvcuda_dll);
-                return new Version(fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart, fvi.FilePrivatePart);
+                return CudaDriver.Version;
             }
         }
 
@@ -28,18 +22,8 @@ namespace Libcuda
         {
             get
             {
-                try
-                {
-                    int version;
-                    var error = nvcuda.cuDriverGetVersion(out version);
-                    if (error != CUresult.Success) throw new CudaException(error);
-
-                    return (CudaVersion)version;
-                }
-                catch (DllNotFoundException)
-                {
-                    return 0;
-                }
+                try { return (CudaVersion)nvcuda.cuDriverGetVersion(); }
+                catch (CudaException) { return 0; }
             }
         }
 

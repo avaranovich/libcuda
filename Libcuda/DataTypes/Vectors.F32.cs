@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Libcuda.DataTypes
 {
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct float1 : IEnumerable<float>, IEquatable<float1>
     {
         public float X;
@@ -45,6 +47,7 @@ namespace Libcuda.DataTypes
     }
 
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct float2 : IEnumerable<float>, IEquatable<float2>
     {
         public float X;
@@ -89,6 +92,7 @@ namespace Libcuda.DataTypes
     }
 
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct float3 : IEnumerable<float>, IEquatable<float3>
     {
         public float X;
@@ -138,6 +142,7 @@ namespace Libcuda.DataTypes
     }
 
     [DebuggerNonUserCode]
+    [StructLayout(LayoutKind.Sequential)]
     public struct float4 : IEnumerable<float>, IEquatable<float4>
     {
         public float X;

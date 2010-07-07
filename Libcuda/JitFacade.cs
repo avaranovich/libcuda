@@ -1,8 +1,8 @@
 using System;
 using System.Diagnostics;
 using Libcuda.DataTypes;
-using Libcuda.Devices;
-using Libcuda.Jit;
+using Libcuda.Api.Devices;
+using Libcuda.Api.Jit;
 using Libcuda.Versions;
 using XenoGears.Functional;
 using XenoGears.Assertions;
@@ -27,7 +27,7 @@ namespace Libcuda
             compiler.Target = target;
 
             var result = compiler.Compile(ptx);
-            return new JittedKernel(ptx, result);
+            return new JittedKernel(result);
         }
     }
 }

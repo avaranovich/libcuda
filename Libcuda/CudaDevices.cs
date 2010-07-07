@@ -1,10 +1,9 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using Libcuda.Devices;
-using Libcuda.Native;
-using Libcuda.Native.Exceptions;
+using Libcuda.Api.Devices;
+using Libcuda.Api.Native;
+using Libcuda.Exceptions;
 using XenoGears.Functional;
 
 namespace Libcuda
@@ -27,14 +26,12 @@ namespace Libcuda
             {
                 try
                 {
-                    int deviceCount;
-                    var error1 = nvcuda.cuDeviceGetCount(out deviceCount);
-                    if (error1 != CUresult.Success) throw new CudaException(error1);
-                    return deviceCount;
+                    return nvcuda.cuDeviceGetCount();
                 }
-                catch (DllNotFoundException)
+                catch (CudaException cex)
                 {
-                    return 0;
+                    if (cex.Error == CudaError.NoDriver) return 0;
+                    else throw;
                 }
             }
         }
