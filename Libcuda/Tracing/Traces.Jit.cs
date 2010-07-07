@@ -12,6 +12,11 @@ namespace Libcuda.Api.Jit
             Traces.Jit.Write(o);
         }
 
+        public static void Write(String message)
+        {
+            Traces.Jit.Write(message);
+        }
+
         public static void Write(String message, params Object[] args)
         {
             Traces.Jit.Write(String.Format(message, args));
@@ -20,6 +25,12 @@ namespace Libcuda.Api.Jit
         public static void WriteLine(Object o)
         {
             Write(o);
+            WriteLine();
+        }
+
+        public static void WriteLine(String message)
+        {
+            Write(message);
             WriteLine();
         }
 

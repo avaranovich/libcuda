@@ -22,7 +22,7 @@ namespace Libcuda.Api.Jit
         {
             Log.WriteLine("Peforming JIT compilation...");
             Log.WriteLine("    PTX source text                              : {0}", "(see below)");
-            Log.WriteLine("    Target ISA                                   : {0}", Target);
+            Log.WriteLine("    Hardware ISA                                 : {0}", Target);
             Log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
             Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
             Log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);

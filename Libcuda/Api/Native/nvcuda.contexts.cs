@@ -49,7 +49,7 @@ namespace Libcuda.Api.Native
             {
                 Log.WriteLine("Dynamically linking to CUDA driver...");
                 var cudaVersion = CudaVersions.Cuda;
-                if (cudaVersion != 0)
+                if (cudaVersion == 0)
                 {
                     Log.WriteLine("CUDA driver not found!");
                     throw new CudaException(CudaError.NoDriver);
@@ -57,7 +57,7 @@ namespace Libcuda.Api.Native
                 else
                 {
                     (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
-                    Log.WriteLine("Successfully linked to {0} {1} (CUDA {1}.{2}).",
+                    Log.WriteLine("Successfully linked to {0} {1} (CUDA {2}.{3}).",
                         CudaDriver.Name,
                         CudaDriver.Version,
                         (int)cudaVersion / 1000, (int)cudaVersion % 100);
@@ -82,7 +82,7 @@ namespace Libcuda.Api.Native
                 Log.WriteLine(Environment.NewLine + device);
 
                 // Step 5. Create the context - kernel execution environment
-                Log.WriteLine("Creating CUDA context on device #0...");
+                Log.WriteLine("Creating CUDA context for device #0...");
                 _ctx = cuCtxCreate(CUctx_flags.None, device.Handle);
                 Log.WriteLine("Success.");
                 Log.WriteLine(String.Empty);

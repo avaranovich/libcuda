@@ -12,6 +12,11 @@ namespace Libcuda.Api.Native
             Traces.Init.Write(o);
         }
 
+        public static void Write(String message)
+        {
+            Traces.Init.Write(message);
+        }
+
         public static void Write(String message, params Object[] args)
         {
             Traces.Init.Write(String.Format(message, args));
@@ -20,6 +25,12 @@ namespace Libcuda.Api.Native
         public static void WriteLine(Object o)
         {
             Write(o);
+            WriteLine();
+        }
+
+        public static void WriteLine(String message)
+        {
+            Write(message);
             WriteLine();
         }
 

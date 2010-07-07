@@ -12,6 +12,11 @@ namespace Libcuda.Api.Run
             Traces.Run.Write(o);
         }
 
+        public static void Write(String message)
+        {
+            Traces.Run.Write(message);
+        }
+
         public static void Write(String message, params Object[] args)
         {
             Traces.Run.Write(String.Format(message, args));
@@ -20,6 +25,12 @@ namespace Libcuda.Api.Run
         public static void WriteLine(Object o)
         {
             Write(o);
+            WriteLine();
+        }
+
+        public static void WriteLine(String message)
+        {
+            Write(message);
             WriteLine();
         }
 
