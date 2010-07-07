@@ -13,7 +13,12 @@ namespace Libcuda.Api.Jit
         public JitResult JitResult { get; private set; }
 
         public JitException(JitResult jitResult)
-            : base(jitResult.ErrorCode)
+            : this(jitResult, null)
+        {
+        }
+
+        public JitException(JitResult jitResult, Exception innerException)
+            : base(jitResult.ErrorCode, innerException)
         {
             JitResult = jitResult.AssertNotNull();
         }

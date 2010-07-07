@@ -8,7 +8,6 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
 using XenoGears.Assertions;
-using XenoGears.Logging;
 using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
@@ -28,6 +27,7 @@ namespace Libcuda.Api.Native
         // you must also insert affinity checks for high-level objects
         // so that they don't accidentally get accessed from an erroneous thread
         // CUDA driver checks this anyways, but we should provide high-level checks too
+        // upd. it could also be a good idea to configure logging at thread level
 
         private static GlobalContext _ctx;
         private static int _affinity;
@@ -47,43 +47,45 @@ namespace Libcuda.Api.Native
 
             public GlobalContext()
             {
-                Log.TraceLine("Dynamically linking to CUDA driver...");
+                Log.WriteLine("Dynamically linking to CUDA driver...");
                 var cudaVersion = CudaVersions.Cuda;
                 if (cudaVersion != 0)
                 {
-                    Log.TraceLine("CUDA driver not found!");
+                    Log.WriteLine("CUDA driver not found!");
                     throw new CudaException(CudaError.NoDriver);
                 }
                 else
                 {
                     (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
-                    Log.TraceLine("Successfully linked to {0} {1} (CUDA {1}.{2}).",
-                        CudaDriver.Name, CudaDriver.Version, (int)cudaVersion / 1000, (int)cudaVersion % 100);
-                    Log.TraceLine();
+                    Log.WriteLine("Successfully linked to {0} {1} (CUDA {1}.{2}).",
+                        CudaDriver.Name,
+                        CudaDriver.Version,
+                        (int)cudaVersion / 1000, (int)cudaVersion % 100);
+                    Log.WriteLine();
                 }
 
-                Log.TraceLine("Initializing CUDA driver...");
+                Log.WriteLine("Initializing CUDA driver...");
                 cuInit(CUinit_flags.None);
-                Log.TraceLine("Success.");
-                Log.TraceLine();
+                Log.WriteLine("Success.");
+                Log.WriteLine();
 
                 // Step 3. Verify that we've got at least one CUDA capable device
-                Log.TraceLine("Acquiring number of CUDA-capable devices...");
+                Log.WriteLine("Acquiring number of CUDA-capable devices...");
                 var deviceCount = cuDeviceGetCount();
-                Log.TraceLine("{0} device(s) found.", cuDeviceGetCount());
+                Log.WriteLine("{0} device(s) found.", cuDeviceGetCount());
                 (deviceCount > 0).AssertTrue();
 
                 // Step 4. Get the device (only 1 device is supported at the moment)
-                Log.TraceLine("Accessing device #0...");
+                Log.WriteLine("Accessing device #0...");
                 var device = CudaDevice.First;
-                Log.TraceLine("Success.");
-                Log.TraceLine(Environment.NewLine + device);
+                Log.WriteLine("Success.");
+                Log.WriteLine(Environment.NewLine + device);
 
                 // Step 5. Create the context - kernel execution environment
-                Log.TraceLine("Creating CUDA context on device #0...");
+                Log.WriteLine("Creating CUDA context on device #0...");
                 _ctx = cuCtxCreate(CUctx_flags.None, device.Handle);
-                Log.TraceLine("Success.");
-                Log.TraceLine(String.Empty);
+                Log.WriteLine("Success.");
+                Log.WriteLine(String.Empty);
             }
 
             ~GlobalContext()

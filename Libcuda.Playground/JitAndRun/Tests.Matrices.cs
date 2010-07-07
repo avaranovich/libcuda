@@ -27,7 +27,7 @@ namespace Libcuda.Playground.JitAndRun
 
         private void PrintMatrix(String headline, float[,] m)
         {
-            Log.Trace(headline + Environment.NewLine + m.StringJoin() + Environment.NewLine);
+            Log.Write(headline + Environment.NewLine + m.StringJoin() + Environment.NewLine);
         }
 
         private void AssertAreTheSame(float[,] a, float[,] b)
@@ -47,12 +47,12 @@ namespace Libcuda.Playground.JitAndRun
             }))() : false;
             if (!areTheSame)
             {
-                Log.TraceLine("*".Repeat(120));
-                Log.TraceLine("ERROR! Calculated matrix ain't equal to reference result.");
-                Log.TraceLine();
+                Log.WriteLine("*".Repeat(120));
+                Log.WriteLine("ERROR! Calculated matrix ain't equal to reference result.");
+                Log.WriteLine();
 
                 PrintMatrix("Expected: ", a);
-                Log.TraceLine();
+                Log.WriteLine();
                 PrintMatrix("Actual: ", b);
                 AssertionHelper.Fail();
             }

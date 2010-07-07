@@ -7,7 +7,6 @@ using Libcuda.Api.Jit;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using XenoGears.Assertions;
-using XenoGears.Logging;
 using XenoGears.Functional;
 using XenoGears.Reflection.Simple;
 using XenoGears.Strings;
@@ -46,7 +45,7 @@ namespace Libcuda.Api.Run
 
                 TraceBeforeLaunch(gridDim, blockDim);
                 var wall_time = CudaProfiler.Benchmark(() => nvcuda.cuLaunchGrid(Function, gridDim));
-                Log.TraceLine("Function execution succeeded in {0}." + Environment.NewLine, wall_time);
+                Log.WriteLine("Function execution succeeded in {0}." + Environment.NewLine, wall_time);
                 return new KernelResult(this, wall_time);
             }
             finally 
@@ -57,8 +56,8 @@ namespace Libcuda.Api.Run
 
         private void TraceBeforeLaunch(dim3 gridDim, dim3 blockDim)
         {
-            Log.TraceLine("Launching function {0} ({1})...", Function.Name, Function.Handle);
-            Log.TraceLine("Grid is configured as {2}: blockdim is {0}, griddim is {1}",
+            Log.WriteLine("Launching function {0} ({1})...", Function.Name, Function.Handle);
+            Log.WriteLine("Grid is configured as {2}: blockdim is {0}, griddim is {1}",
                 blockDim.ToString().Slice(4),
                 gridDim.ToString().Slice(4),
                 new dim3(blockDim.X * gridDim.X, blockDim.Y * gridDim.Y, blockDim.Z * gridDim.Z).ToString().Slice(4));
@@ -85,11 +84,11 @@ namespace Libcuda.Api.Run
             {
                 if (i == log.Count() - 1 && maxLength != 0)
                 {
-                    Log.TraceLine("    " + "*".Repeat(maxLength - 4));
+                    Log.WriteLine("    " + "*".Repeat(maxLength - 4));
                 }
 
                 var line = String.Format("    {0} {1} {2} ({3} bytes in VRAM)", entry.SkipLast(1).ToArray());
-                Log.TraceLine(line);
+                Log.WriteLine(line);
                 maxLength = Math.Max(line.Length, maxLength);
             });
         }

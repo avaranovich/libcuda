@@ -4,7 +4,6 @@ using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Versions;
 using XenoGears.Functional;
-using XenoGears.Logging;
 using XenoGears.Strings;
 
 namespace Libcuda.Api.Jit
@@ -21,16 +20,16 @@ namespace Libcuda.Api.Jit
         // todo. cache jitted kernels
         public JitResult Compile(String ptx)
         {
-            Log.TraceLine("Peforming JIT compilation...");
-            Log.TraceLine("    PTX source text                              : {0}", "(see below)");
-            Log.TraceLine("    Target ISA                                   : {0}", Target);
-            Log.TraceLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
-            Log.TraceLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
-            Log.TraceLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
-            Log.TraceLine(Environment.NewLine + "*".Repeat(120));
-            Log.TraceLine(ptx.QuoteBraces().TrimEnd());
-            Log.TraceLine(120.Times("*"));
-            Log.TraceLine();
+            Log.WriteLine("Peforming JIT compilation...");
+            Log.WriteLine("    PTX source text                              : {0}", "(see below)");
+            Log.WriteLine("    Target ISA                                   : {0}", Target);
+            Log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
+            Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
+            Log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
+            Log.WriteLine(Environment.NewLine + "*".Repeat(120));
+            Log.WriteLine(ptx.QuoteBraces().TrimEnd());
+            Log.WriteLine(120.Times("*"));
+            Log.WriteLine();
 
             var options = new CUjit_options();
             options.MaxRegistersPerThread = MaxRegistersPerThread;
@@ -43,15 +42,12 @@ namespace Libcuda.Api.Jit
             try
             {
                 var result = nvcuda.cuModuleLoadDataEx(ptx, options);
-                Log.TraceLine(result.InfoLog);
-                Log.TraceLine();
                 return new JitResult(this, ptx, result);
             }
-            catch (JitException jex)
+            catch (CUjit_exception jex)
             {
-                Log.TraceLine(jex.InfoLog);
-                Log.TraceLine();
-                throw;
+                var result = new JitResult(this, ptx, jex.JitResult);
+                throw new JitException(result);
             }
         }
     }

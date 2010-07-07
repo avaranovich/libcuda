@@ -4,7 +4,6 @@ using System.Diagnostics;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
-using XenoGears.Logging;
 using XenoGears.Functional;
 
 namespace Libcuda.Api.Jit
@@ -41,28 +40,32 @@ namespace Libcuda.Api.Jit
 
             if (Module != null)
             {
-                Log.TraceLine("JIT compilation succeeded in {0} and produced 0x{1}.", CompilationWallTime, Module);
-                Log.TraceLine();
+                Log.WriteLine(result.InfoLog);
+                Log.WriteLine();
+                Log.WriteLine("JIT compilation succeeded in {0} and produced 0x{1}.", CompilationWallTime, Module);
+                Log.WriteLine();
 
-                Log.TraceLine("Loading entry points of {0}...", Module);
+                Log.WriteLine("Loading entry points of {0}...", Module);
                 Module.Functions.ForEach(function =>
                 {
-                    Log.TraceLine("Found entry point {0}...", function.Name);
-                    Log.TraceLine("Successfully resolved it as {0}.", function.Handle);
-                    Log.TraceLine("    Max threads per block        : {0}", function.MaxThreadsPerBlock);
-                    Log.TraceLine("    Shared memory requirements   : {0} bytes", function.SharedSizeBytes);
-                    Log.TraceLine("    Constant memory requirements : {0} bytes", function.ConstSizeBytes);
-                    Log.TraceLine("    Local memory requirements    : {0} bytes", function.LocalSizeBytes);
-                    Log.TraceLine("    Register memory requirements : {0} registers", function.NumRegs);
-                    Log.TraceLine("    PTX version                  : {0}.{1}", function.PtxVersion / 10, function.PtxVersion % 10);
-                    Log.TraceLine("    Binary version               : {0}.{1}", function.BinaryVersion / 10, function.BinaryVersion % 10);
+                    Log.WriteLine("Found entry point {0}...", function.Name);
+                    Log.WriteLine("Successfully resolved it as {0}.", function.Handle);
+                    Log.WriteLine("    Max threads per block        : {0}", function.MaxThreadsPerBlock);
+                    Log.WriteLine("    Shared memory requirements   : {0} bytes", function.SharedSizeBytes);
+                    Log.WriteLine("    Constant memory requirements : {0} bytes", function.ConstSizeBytes);
+                    Log.WriteLine("    Local memory requirements    : {0} bytes", function.LocalSizeBytes);
+                    Log.WriteLine("    Register memory requirements : {0} registers", function.NumRegs);
+                    Log.WriteLine("    PTX version                  : {0}.{1}", function.PtxVersion / 10, function.PtxVersion % 10);
+                    Log.WriteLine("    Binary version               : {0}.{1}", function.BinaryVersion / 10, function.BinaryVersion % 10);
                 });
-                Log.TraceLine();
+                Log.WriteLine();
             }
             else
             {
-                Log.TraceLine("JIT compilation failed in {0}.", CompilationWallTime);
-                Log.TraceLine();
+                Log.WriteLine(result.InfoLog);
+                Log.WriteLine();
+                Log.WriteLine("JIT compilation failed in {0}.", CompilationWallTime);
+                Log.WriteLine();
             }
         }
     }
