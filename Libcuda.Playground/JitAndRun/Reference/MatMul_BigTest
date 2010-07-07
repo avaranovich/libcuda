@@ -1,6 +1,6 @@
 ﻿Peforming JIT compilation...
     PTX source text                              : (see below)
-    Target hardware ISA                          : SM_13
+    Target hardware ISA                          : (determined from context)
     Actual hardware ISA                          : SM_13
     Max registers per thread                     : 0
     Planned threads per block                    : 256

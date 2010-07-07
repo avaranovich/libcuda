@@ -1,16 +1,16 @@
 using System;
-using System.Diagnostics;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Versions;
 using XenoGears.Functional;
 using XenoGears.Strings;
+using XenoGears.Assertions;
 
 namespace Libcuda.Api.Jit
 {
-    [DebuggerNonUserCode]
     public class JitCompiler
     {
+        public bool TargetFromContext { get; set; }
         public HardwareIsa Target { get; set; }
         private int _optimizationLevel = 4; // 0..4, higher is better
         public int OptimizationLevel { get { return _optimizationLevel; } set { _optimizationLevel = value; } }
@@ -22,7 +22,7 @@ namespace Libcuda.Api.Jit
         {
             Log.WriteLine("Peforming JIT compilation...");
             Log.WriteLine("    PTX source text                              : {0}", "(see below)");
-            Log.WriteLine("    Target hardware ISA                          : {0}", Target);
+            Log.WriteLine("    Target hardware ISA                          : {0}", TargetFromContext ? "(determined from context)" : Target.ToString());
             Log.WriteLine("    Actual hardware ISA                          : {0}", CudaVersions.HardwareIsa);
             Log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
             Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
@@ -36,11 +36,10 @@ namespace Libcuda.Api.Jit
             options.MaxRegistersPerThread = MaxRegistersPerThread;
             options.PlannedThreadsPerBlock = PlannedThreadsPerBlock;
             options.OptimizationLevel = OptimizationLevel;
-            options.TargetFromContext = true;
             // todo. an attempt to pass the Target value directly leads to CUDA_ERROR_INVALID_VALUE
             // as of now, this feature is not really important, so I'm marking it as TBI
-//            options.TargetFromContext = false;
-//            options.Target = Target.ToCUjit_target();
+            options.TargetFromContext = TargetFromContext.AssertTrue();
+            options.Target = Target.ToCUjit_target();
             options.FallbackStrategy = CUjit_fallbackstrategy.PreferPtx;
 
             try

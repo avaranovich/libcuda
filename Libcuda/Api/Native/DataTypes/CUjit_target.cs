@@ -31,6 +31,8 @@ namespace Libcuda.Api.Native.DataTypes
                     return CUjit_target.Compute13;
                 case HardwareIsa.SM_20:
                     return CUjit_target.Compute20;
+                case 0:
+                    return 0;
                 default:
                     throw AssertionHelper.Fail();
             }

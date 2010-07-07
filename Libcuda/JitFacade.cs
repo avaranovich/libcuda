@@ -1,11 +1,9 @@
 using System;
 using System.Diagnostics;
 using Libcuda.DataTypes;
-using Libcuda.Api.Devices;
 using Libcuda.Api.Jit;
 using Libcuda.Versions;
 using XenoGears.Functional;
-using XenoGears.Assertions;
 
 namespace Libcuda
 {
@@ -14,9 +12,13 @@ namespace Libcuda
     {
         public static JittedKernel JitKernel(this String ptx, dim3 blockDim)
         {
-            var device = CudaDevice.Current.AssertNotNull();
-            var auto = device.Caps.ComputeCaps;
-            return ptx.JitKernel(blockDim, auto);
+            var compiler = new JitCompiler();
+            compiler.MaxRegistersPerThread = 0;
+            compiler.PlannedThreadsPerBlock = (int)blockDim.Product();
+            compiler.TargetFromContext = true;
+
+            var result = compiler.Compile(ptx);
+            return new JittedKernel(result);
         }
 
         public static JittedKernel JitKernel(this String ptx, dim3 blockDim, HardwareIsa target)
