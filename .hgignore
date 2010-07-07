@@ -1,4 +1,5 @@
 ﻿glob:*.ncb
+glob:*.pdb
 glob:*.pidb
 glob:*.suo
 glob:*.user
@@ -7,4 +8,14 @@ glob:bin/
 glob:obj/
 glob:*/bin/
 glob:*/obj/
+glob:*/Debug/
+glob:*/Release/
 glob:*/AssemblyInfo.cs
+glob:*.i
+glob:*.ii
+glob:*.cudafe*
+glob:*.cu.cpp
+glob:*.fatbin.c
+glob:*.cubin
+glob:*.hash
+glob:Libcuda.ncb
