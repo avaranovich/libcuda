@@ -144,8 +144,8 @@ Successfully resolved it as CUfunction <Handle>.
     Constant memory requirements : 0 bytes
     Local memory requirements    : 0 bytes
     Register memory requirements : 9 registers
-    PTX version                  : 1.3
-    Binary version               : 1.3
+    PTX version                  : SM_13
+    Binary version               : SM_13
 
 Launching function _Z12MatMulKernel6MatrixS_S_ (CUfunction <Handle>)...
 Grid is configured as (416, 304, 1): blockdim is (16, 16, 1), griddim is (26, 19, 1)

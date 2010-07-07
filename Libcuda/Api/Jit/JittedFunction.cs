@@ -5,6 +5,7 @@ using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Api.Run;
 using Libcuda.DataTypes;
+using Libcuda.Versions;
 using XenoGears.Assertions;
 using XenoGears.Traits.Disposable;
 using XenoGears.Functional;
@@ -25,8 +26,8 @@ namespace Libcuda.Api.Jit
         public int ConstSizeBytes { get; private set; }
         public int LocalSizeBytes { get; private set; }
         public int NumRegs { get; private set; }
-        public int PtxVersion { get; private set; }
-        public int BinaryVersion { get; private set; }
+        public HardwareIsa PtxVersion { get; private set; }
+        public HardwareIsa BinaryVersion { get; private set; }
 
         public JittedFunction(CUfunction handle)
             : this(handle, null)
@@ -43,8 +44,8 @@ namespace Libcuda.Api.Jit
             ConstSizeBytes = nvcuda.cuFuncGetAttribute(CUfunction_attribute.ConstSizeBytes, this);
             LocalSizeBytes = nvcuda.cuFuncGetAttribute(CUfunction_attribute.LocalSizeBytes, this);
             NumRegs = nvcuda.cuFuncGetAttribute(CUfunction_attribute.NumRegs, this);
-            PtxVersion = nvcuda.cuFuncGetAttribute(CUfunction_attribute.PtxVersion, this);
-            BinaryVersion = nvcuda.cuFuncGetAttribute(CUfunction_attribute.BinaryVersion, this);
+            PtxVersion = (HardwareIsa)nvcuda.cuFuncGetAttribute(CUfunction_attribute.PtxVersion, this);
+            BinaryVersion = (HardwareIsa)nvcuda.cuFuncGetAttribute(CUfunction_attribute.BinaryVersion, this);
 
             // note. there's no necessity in unloading the function
             // it'll be unloaded together with the module

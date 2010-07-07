@@ -59,8 +59,8 @@ namespace Libcuda.Api.Jit
                     Log.WriteLine("    Constant memory requirements : {0} bytes", function.ConstSizeBytes);
                     Log.WriteLine("    Local memory requirements    : {0} bytes", function.LocalSizeBytes);
                     Log.WriteLine("    Register memory requirements : {0} registers", function.NumRegs);
-                    Log.WriteLine("    PTX version                  : {0}.{1}", function.PtxVersion / 10, function.PtxVersion % 10);
-                    Log.WriteLine("    Binary version               : {0}.{1}", function.BinaryVersion / 10, function.BinaryVersion % 10);
+                    Log.WriteLine("    PTX version                  : {0}", function.PtxVersion);
+                    Log.WriteLine("    Binary version               : {0}", function.BinaryVersion);
                 });
                 Log.WriteLine();
             }
