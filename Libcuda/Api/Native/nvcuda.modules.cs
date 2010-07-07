@@ -38,6 +38,10 @@ namespace Libcuda.Api.Native
             {
                 try
                 {
+                    // todo. an attempt to pass the Target value directly leads to CUDA_ERROR_INVALID_VALUE
+                    // as of now, this feature is not really important, so I'm marking it as TBI
+                    options.TargetFromContext.AssertTrue();
+
                     using (var native_options = new nativeModuleLoadDataExOptions(options))
                     {
                         CUmodule module;
@@ -71,7 +75,7 @@ namespace Libcuda.Api.Native
 
         #region Murky details of converting CUjit_options into the format expected by nativeModuleLoadDataEx
 
-        [DebuggerNonUserCode]
+//        [DebuggerNonUserCode]
         private class nativeModuleLoadDataExOptions : Disposable
         {
             // input parameters

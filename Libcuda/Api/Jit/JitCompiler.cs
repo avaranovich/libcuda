@@ -36,8 +36,11 @@ namespace Libcuda.Api.Jit
             options.MaxRegistersPerThread = MaxRegistersPerThread;
             options.PlannedThreadsPerBlock = PlannedThreadsPerBlock;
             options.OptimizationLevel = OptimizationLevel;
-            options.TargetFromContext = false;
-            options.Target = Target.ToCUjit_target();
+            options.TargetFromContext = true;
+            // todo. an attempt to pass the Target value directly leads to CUDA_ERROR_INVALID_VALUE
+            // as of now, this feature is not really important, so I'm marking it as TBI
+//            options.TargetFromContext = false;
+//            options.Target = Target.ToCUjit_target();
             options.FallbackStrategy = CUjit_fallbackstrategy.PreferPtx;
 
             try
