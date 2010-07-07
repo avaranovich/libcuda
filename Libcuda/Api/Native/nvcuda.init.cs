@@ -11,7 +11,7 @@ namespace Libcuda.Api.Native
     [DebuggerNonUserCode]
     public static partial class nvcuda
     {
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuInit")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUINIT_g4703189f4c7f490c73f77942a3fa8443.html
         private static extern CUresult nativeInit(CUinit_flags Flags);
 

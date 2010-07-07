@@ -11,7 +11,7 @@ namespace Libcuda.Api.Native
 {
     public static partial class nvcuda
     {
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceGetCount")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_g09377966b78423897495d7ee6816ab17.html
         private static extern CUresult nativeDeviceGetCount(out int count);
 
@@ -42,7 +42,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceGet")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_g0864f76e0c101311b2e1eb5c40a54ea9.html
         private static extern CUresult nativeDeviceGet(out CUdevice device, int ordinal);
 
@@ -73,7 +73,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda", CharSet = CharSet.Ansi)]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceGetName", CharSet = CharSet.Ansi)]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_gea189b5fe198ceb909f2a8bc3188e36f.html
         private static extern CUresult nativeDeviceGetName(StringBuilder name, int len, CUdevice dev);
 
@@ -104,7 +104,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceComputeCapability")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_g2f36c6412efa2b6b89feefa233fb7519.html
         private static extern CUresult cuDeviceComputeCapability(out int major, out int minor, CUdevice dev);
 
@@ -135,7 +135,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceGetAttribute")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_ge283d0251a80fe5a82ec8f6e552eb248.html
         private static extern CUresult nativeDeviceGetAttribute(out int pi, CUdevice_attribute attrib, CUdevice dev);
 
@@ -188,7 +188,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDeviceTotalMem")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_g7ff0e9bbf5268a053a77e7063b8a6bec.html
         private static extern CUresult nativeDeviceTotalMem(out uint bytes, CUdevice dev);
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native;
 using XenoGears.Reflection.Attributes;
+using XenoGears.Reflection.Shortcuts;
 
 namespace Libcuda
 {
@@ -14,7 +15,7 @@ namespace Libcuda
         {
             get
             {
-                var sample = typeof(nvcuda).GetMethod("cuDriverGetVersion");
+                var sample = typeof(nvcuda).GetMethod("nativeDriverGetVersion", BF.All);
                 return sample.Attr<DllImportAttribute>().Value + ".dll";
             }
         }

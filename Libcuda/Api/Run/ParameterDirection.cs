@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using XenoGears.Assertions;
 
 namespace Libcuda.Api.Run
@@ -11,6 +12,7 @@ namespace Libcuda.Api.Run
         InOut = 3,
     }
 
+    [DebuggerNonUserCode]
     public static class ParameterDirectionHelper
     {
         public static bool IsIn(this ParameterDirection direction)

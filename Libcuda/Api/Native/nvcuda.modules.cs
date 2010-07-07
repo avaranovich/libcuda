@@ -16,7 +16,7 @@ namespace Libcuda.Api.Native
 {
     public static partial class nvcuda
     {
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuModuleLoadDataEx")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUMODULE_gbfbf77eb2a307af8aa81376ecc909bd3.html
         private static extern CUresult nativeModuleLoadDataEx(out CUmodule module, IntPtr image, uint numOptions, CUjit_option[] options, IntPtr optionValues);
 
@@ -325,7 +325,7 @@ namespace Libcuda.Api.Native
 
         #endregion
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuModuleUnload")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUMODULE_g35a621d73ee186733f051de672fbe02b.html
         private static extern CUresult nativeModuleUnload(CUmodule mod);
 
@@ -354,7 +354,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuModuleGetFunction")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUMODULE_ge18a9f0d853ae3a96a38416a0671606b.html
         private static extern CUresult nativeModuleGetFunction(out CUfunction hfunc, CUmodule hmod, String name);
 

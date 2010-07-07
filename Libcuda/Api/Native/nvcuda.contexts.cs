@@ -99,7 +99,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuCtxCreate")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUCTX_g02b31a192b32043c0787696292f1ffbe.html
         private static extern CUresult nativeCtxCreate(out CUcontext pctx, CUctx_flags flags, CUdevice dev);
 
@@ -127,7 +127,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuCtxDestroy")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUCTX_g23bf81c24c28be3495fec41146f9e025.html
         private static extern CUresult nativeCtxDestroy(CUcontext ctx);
 

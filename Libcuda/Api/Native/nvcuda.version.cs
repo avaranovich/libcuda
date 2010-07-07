@@ -8,7 +8,7 @@ namespace Libcuda.Api.Native
 {
     public static partial class nvcuda
     {
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuDriverGetVersion")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUVERSION_gf83e088e9433ce2e9ce87203791dd122.html
         private static extern CUresult nativeDriverGetVersion(out int version);
 

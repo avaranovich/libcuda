@@ -9,7 +9,7 @@ namespace Libcuda.Api.Native
 {
     public static partial class nvcuda
     {
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuEventCreate")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUEVENT_g433317083f929b9298f8a88d57aa5017.html
         private static extern CUresult nativeEventCreate(out CUevent phEvent, CUevent_flags Flags);
 
@@ -40,7 +40,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuEventDestroy")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUEVENT_g349006734f6e7378ea36cb57c239d4c7.html
         private static extern CUresult nativeEventDestroy(CUevent hEvent);
 
@@ -69,7 +69,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuEventRecord")]
         //http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUEVENT_g93468fbdae4190b79926381a90a94301.html
         private static extern CUresult nativeEventRecord(CUevent hEvent, CUstream hStream);
 
@@ -107,7 +107,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuEventSynchronize")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUEVENT_ge3ed6a308c602d139373895cb99cb7ab.html
         private static extern CUresult nativeEventSynchronize(CUevent hEvent);
 
@@ -136,7 +136,7 @@ namespace Libcuda.Api.Native
             }
         }
 
-        [DllImport("nvcuda")]
+        [DllImport("nvcuda", EntryPoint = "cuEventElapsedTime")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUEVENT_g7895332c94680b174ef41373af09d9ce.html
         private static extern CUresult nativeEventElapsedTime(out float pMilliseconds, CUevent hStart, CUevent hEnd);
 
