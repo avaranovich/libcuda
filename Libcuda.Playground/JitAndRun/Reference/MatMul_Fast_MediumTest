@@ -237,11 +237,11 @@ $LDWend__Z17MatMulKernel_Fast6MatrixS_S_:
 
 : Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx_8'
 
-JIT compilation succeeded in 00:00:00 and produced CUmodule 0x5007090.
+JIT compilation succeeded in 00:00:00 and produced CUmodule <Handle>.
 
-Loading entry points of CUmodule 0x5007090...
+Loading entry points of CUmodule <Handle>...
 Found entry point _Z17MatMulKernel_Fast6MatrixS_S_...
-Successfully resolved it as CUfunction 0x5006638.
+Successfully resolved it as CUfunction <Handle>.
     Max threads per block        : 512
     Shared memory requirements   : 2100 bytes
     Constant memory requirements : 0 bytes
@@ -250,7 +250,7 @@ Successfully resolved it as CUfunction 0x5006638.
     PTX version                  : 1.3
     Binary version               : 1.3
 
-Launching function _Z17MatMulKernel_Fast6MatrixS_S_ (CUfunction 0x5006638)...
+Launching function _Z17MatMulKernel_Fast6MatrixS_S_ (CUfunction <Handle>)...
 Grid is configured as (32, 32, 1): blockdim is (16, 16, 1), griddim is (2, 2, 1)
     +0000 In  19                (0 bytes in VRAM)
     +0004 In  17                (0 bytes in VRAM)
@@ -263,4 +263,4 @@ Grid is configured as (32, 32, 1): blockdim is (16, 16, 1), griddim is (2, 2, 1)
     +0032 Out System.Single[,]  (1224 bytes in VRAM)
     ************************************************
     0036                        (3884 bytes in VRAM)
-Function execution succeeded in 00:00:00.011071 (ε = 0.5 μs).
+Function execution succeeded in <TimeSpan> (ε = 0.5 μs).

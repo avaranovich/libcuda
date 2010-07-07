@@ -25,8 +25,7 @@ namespace Libcuda.Api.Native.DataTypes
         public override String ToString()
         {
             if (this == Null) return "CUmodule null";
-            var format = "x" + Marshal.SizeOf(typeof(IntPtr));
-            return String.Format("CUmodule 0x{0}", Handle.ToString(format));
+            return String.Format("CUmodule 0x{0}", Handle.ToString("x8"));
         }
     }
 }

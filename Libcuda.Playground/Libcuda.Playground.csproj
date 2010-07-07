@@ -55,6 +55,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JitAndRun\Tests.Boilerplate.cs" />
     <None Include="Properties\AssemblyInfo.template" />
     <EmbeddedResource Include="JitAndRun\Ptx\matmul_fast.ptx" />
     <EmbeddedResource Include="JitAndRun\Ptx\matmul.ptx" />

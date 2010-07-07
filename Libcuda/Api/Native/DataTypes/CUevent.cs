@@ -25,8 +25,7 @@ namespace Libcuda.Api.Native.DataTypes
         public override String ToString()
         {
             if (this == Null) return "CUevent null";
-            var format = "x" + Marshal.SizeOf(typeof(IntPtr));
-            return String.Format("CUevent 0x{0}", Handle.ToString(format));
+            return String.Format("CUevent 0x{0}", Handle.ToString("x8"));
         }
     }
 }
