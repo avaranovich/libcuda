@@ -27,7 +27,7 @@ namespace Libcuda.Api.Native
         private static int _affinity;
         static nvcuda()
         {
-            using (NativeThread.Affinity(out _affinity))
+            using (NativeThread.Affinitize(out _affinity))
             {
                 _ctx = new GlobalContext();
             }

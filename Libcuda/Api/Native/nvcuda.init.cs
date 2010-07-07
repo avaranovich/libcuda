@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -17,22 +18,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void cuInit(CUinit_flags Flags)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeInit(Flags);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeInit(Flags);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
     }

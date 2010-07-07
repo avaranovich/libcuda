@@ -5,6 +5,7 @@ using System.Text;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -17,24 +18,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetCount()
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                int count;
-                var error = nativeDeviceGetCount(out count);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return count;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    int count;
+                    var error = nativeDeviceGetCount(out count);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return count;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -45,24 +49,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdevice cuDeviceGet(int ordinal)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                CUdevice device;
-                var error = nativeDeviceGet(out device, ordinal);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return device;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    CUdevice device;
+                    var error = nativeDeviceGet(out device, ordinal);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return device;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -73,24 +80,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static String cuDeviceGetName(CUdevice dev)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var deviceName_buf = new StringBuilder { Capacity = 255 };
-                var error = nativeDeviceGetName(deviceName_buf, deviceName_buf.Capacity, dev);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return deviceName_buf.ToString();
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var deviceName_buf = new StringBuilder { Capacity = 255 };
+                    var error = nativeDeviceGetName(deviceName_buf, deviceName_buf.Capacity, dev);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return deviceName_buf.ToString();
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -101,24 +111,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static HardwareIsa cuDeviceComputeCapability(CUdevice dev)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                int major, minor;
-                var error = cuDeviceComputeCapability(out major, out minor, dev);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return (HardwareIsa)(major * 10 + minor);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    int major, minor;
+                    var error = cuDeviceComputeCapability(out major, out minor, dev);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return (HardwareIsa)(major * 10 + minor);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -129,43 +142,49 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetAttribute(CUdevice_attribute attrib, CUdevice dev)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                int i;
-                var error = nativeDeviceGetAttribute(out i, attrib, dev);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return i;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    int i;
+                    var error = nativeDeviceGetAttribute(out i, attrib, dev);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return i;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static bool cuDeviceGetFlag(CUdevice_attribute attrib, CUdevice dev)
         {
-            var value = cuDeviceGetAttribute(attrib, dev);
-            if (value == 0)
+            using (NativeThread.Affinitize(_affinity))
             {
-                return false;
-            }
-            else if (value == 1)
-            {
-                return true;
-            }
-            else
-            {
-                var fex = new FormatException(String.Format("Attribute \"{0}\" has value \"{1}\" which isn't convertible to bool.", attrib, value));
-                throw new CudaException(CudaError.InvalidValue, fex);
+                var value = cuDeviceGetAttribute(attrib, dev);
+                if (value == 0)
+                {
+                    return false;
+                }
+                else if (value == 1)
+                {
+                    return true;
+                }
+                else
+                {
+                    var fex = new FormatException(String.Format("Attribute \"{0}\" has value \"{1}\" which isn't convertible to bool.", attrib, value));
+                    throw new CudaException(CudaError.InvalidValue, fex);
+                }
             }
         }
 
@@ -176,24 +195,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static uint cuDeviceTotalMem(CUdevice dev)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                uint bytes;
-                var error = nativeDeviceTotalMem(out bytes, dev);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return bytes;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    uint bytes;
+                    var error = nativeDeviceTotalMem(out bytes, dev);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return bytes;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
     }

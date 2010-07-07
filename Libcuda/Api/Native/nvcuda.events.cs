@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -15,24 +16,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUevent cuEventCreate(CUevent_flags Flags)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                CUevent hevent;
-                var error = nativeEventCreate(out hevent, Flags);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return hevent;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    CUevent hevent;
+                    var error = nativeEventCreate(out hevent, Flags);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return hevent;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -43,22 +47,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventDestroy(CUevent hEvent)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeEventDestroy(hEvent);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeEventDestroy(hEvent);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -69,28 +76,34 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventRecord(CUevent hEvent)
         {
-            cuEventRecord(hEvent, CUstream.Null);
+            using (NativeThread.Affinitize(_affinity))
+            {
+                cuEventRecord(hEvent, CUstream.Null);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventRecord(CUevent hEvent, CUstream hStream)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeEventRecord(hEvent, hStream);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeEventRecord(hEvent, hStream);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -101,22 +114,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventSynchronize(CUevent hEvent)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeEventSynchronize(hEvent);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeEventSynchronize(hEvent);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -127,26 +143,29 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUelapsed_time cuEventElapsedTime(CUevent hStart, CUevent hEnd)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                float milliseconds;
-                var error = nativeEventElapsedTime(out milliseconds, hStart, hEnd);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                try
+                {
+                    float milliseconds;
+                    var error = nativeEventElapsedTime(out milliseconds, hStart, hEnd);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
 
-                // note. cannot use TimeSpan here because it ain't work with fractions of milliseconds
-                return new CUelapsed_time(milliseconds);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                    // note. cannot use TimeSpan here because it ain't work with fractions of milliseconds
+                    return new CUelapsed_time(milliseconds);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
     }

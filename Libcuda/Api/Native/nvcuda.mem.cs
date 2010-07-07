@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -15,24 +16,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdeviceptr cuMemAlloc(uint bytesize)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                CUdeviceptr dptr;
-                var error = nativeMemAlloc(out dptr, bytesize);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return dptr;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    CUdeviceptr dptr;
+                    var error = nativeMemAlloc(out dptr, bytesize);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return dptr;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -43,22 +47,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemFree(CUdeviceptr dptr)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeMemFree(dptr);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeMemFree(dptr);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -69,22 +76,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyHtoD(CUdeviceptr dstDevice, IntPtr srcHost, uint ByteCount)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeMemcpyHtoD(dstDevice, srcHost, ByteCount);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeMemcpyHtoD(dstDevice, srcHost, ByteCount);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -95,22 +105,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyDtoH(IntPtr dstHost, CUdeviceptr srcDevice, uint ByteCount)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeMemcpyDtoH(dstHost, srcDevice, ByteCount);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeMemcpyDtoH(dstHost, srcDevice, ByteCount);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
     }

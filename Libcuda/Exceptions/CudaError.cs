@@ -2,6 +2,8 @@ namespace Libcuda.Exceptions
 {
     public enum CudaError
     {
+        InvalidGridDim = -700,
+        InvalidBlockDim = -701,
         NoDriver = -1,
 
         Success = 0,

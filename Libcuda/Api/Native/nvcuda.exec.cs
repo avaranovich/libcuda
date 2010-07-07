@@ -6,6 +6,7 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.DataTypes;
 using Libcuda.Exceptions;
 using XenoGears.Assertions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -18,22 +19,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSeti(CUfunction hfunc, int offset, uint value)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeParamSeti(hfunc, offset, value);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeParamSeti(hfunc, offset, value);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -44,22 +48,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetf(CUfunction hfunc, int offset, float value)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeParamSetf(hfunc, offset, value);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeParamSetf(hfunc, offset, value);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -70,34 +77,37 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetv(CUfunction hfunc, int offset, Object obj)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                obj.AssertNotNull().GetType().IsValueType.AssertTrue();
-                var size = Marshal.SizeOf(obj);
-                var ptr = Marshal.AllocHGlobal(size);
-
                 try
                 {
-                    Marshal.StructureToPtr(obj, ptr, false);
-                    var error = nativeParamSetv(hfunc, offset, ptr, (uint)size);
-                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    obj.AssertNotNull().GetType().IsValueType.AssertTrue();
+                    var size = Marshal.SizeOf(obj);
+                    var ptr = Marshal.AllocHGlobal(size);
+
+                    try
+                    {
+                        Marshal.StructureToPtr(obj, ptr, false);
+                        var error = nativeParamSetv(hfunc, offset, ptr, (uint)size);
+                        if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(ptr);
+                    }
                 }
-                finally
+                catch (CudaException)
                 {
-                    Marshal.FreeHGlobal(ptr);
+                    throw;
                 }
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -108,22 +118,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetSize(CUfunction hfunc, uint numbytes)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeParamSetSize(hfunc, numbytes);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeParamSetSize(hfunc, numbytes);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -134,24 +147,27 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuFuncGetAttribute(CUfunction_attribute attrib, CUfunction hfunc)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                int i;
-                var error = nativeFuncGetAttribute(out i, attrib, hfunc);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-                return i;
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    int i;
+                    var error = nativeFuncGetAttribute(out i, attrib, hfunc);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                    return i;
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -162,22 +178,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetSharedSize(CUfunction hfunc, uint bytes)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeFuncSetSharedSize(hfunc, bytes);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeFuncSetSharedSize(hfunc, bytes);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -188,22 +207,25 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                var error = nativeFuncSetCacheConfig(hfunc, config);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                try
+                {
+                    var error = nativeFuncSetCacheConfig(hfunc, config);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -214,32 +236,39 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetBlockShape(CUfunction hfunc, dim3 dim)
         {
-            cuFuncSetBlockShape(hfunc, dim.X, dim.Y, dim.Z);
+            using (NativeThread.Affinitize(_affinity))
+            {
+                cuFuncSetBlockShape(hfunc, dim.X, dim.Y, dim.Z);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                // if we don't verify this here, we'll get a strange message from the driver
-                var caps = CudaDevice.Current.Caps.GridCaps;
-                (caps.MaxBlockDim >= new dim3(x, y, z)).AssertTrue();
+                try
+                {
+                    // if we don't verify this here, we'll get a strange message from the driver
+                    var caps = CudaDevice.Current.Caps.GridCaps;
+                    var valid_block_dim = caps.MaxBlockDim >= new dim3(x, y, z);
+                    if (!valid_block_dim) throw new CudaException(CudaError.InvalidBlockDim);
 
-                var error = nativeFuncSetBlockShape(hfunc, x, y, z);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                    var error = nativeFuncSetBlockShape(hfunc, x, y, z);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
 
@@ -250,34 +279,41 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuLaunchGrid(CUfunction f, dim3 dim)
         {
-            // wow here we ain't able to specify the Z dimension
-            (dim.Z == 1).AssertTrue();
-            cuLaunchGrid(f, dim.X, dim.Y);
+            using (NativeThread.Affinitize(_affinity))
+            {
+                // wow here we ain't able to specify the Z dimension
+                if (dim.Z != 1) throw new CudaException(CudaError.InvalidGridDim);
+                cuLaunchGrid(f, dim.X, dim.Y);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuLaunchGrid(CUfunction f, int grid_width, int grid_height)
         {
-            try
+            using (NativeThread.Affinitize(_affinity))
             {
-                // if we don't verify this here, we'll get a strange message from the driver
-                var caps = CudaDevice.Current.Caps.GridCaps;
-                (caps.MaxGridDim >= new dim3(grid_width, grid_width)).AssertTrue();
+                try
+                {
+                    // if we don't verify this here, we'll get a strange message from the driver
+                    var caps = CudaDevice.Current.Caps.GridCaps;
+                    var valid_grid_dim = caps.MaxGridDim >= new dim3(grid_width, grid_height, 1);
+                    if (!valid_grid_dim) throw new CudaException(CudaError.InvalidGridDim);
 
-                var error = nativeLaunchGrid(f, grid_width, grid_height);
-                if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
-            }
-            catch (CudaException)
-            {
-                throw;
-            }
-            catch (DllNotFoundException dnfe)
-            {
-                throw new CudaException(CudaError.NoDriver, dnfe);
-            }
-            catch (Exception e)
-            {
-                throw new CudaException(CudaError.Unknown, e);
+                    var error = nativeLaunchGrid(f, grid_width, grid_height);
+                    if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
+                }
+                catch (CudaException)
+                {
+                    throw;
+                }
+                catch (DllNotFoundException dnfe)
+                {
+                    throw new CudaException(CudaError.NoDriver, dnfe);
+                }
+                catch (Exception e)
+                {
+                    throw new CudaException(CudaError.Unknown, e);
+                }
             }
         }
     }
