@@ -14,5 +14,4 @@
 10) Cache jitted ptx.
     This means that clients of that API must not dispose of JittedKernel manually
     However, if an exception gets thrown, the kernel must be disposed of, obviously
-14) Implement thread affinity for high-level concepts!
 15) Segregate trace sources for Libcuda.

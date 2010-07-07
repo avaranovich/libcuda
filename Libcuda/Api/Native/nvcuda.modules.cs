@@ -196,8 +196,7 @@ namespace Libcuda.Api.Native
             private const int maxCharsInLogBuffer = 1000;
             private const int maxCharsInErrorBuffer = 1000;
 
-            private bool _allocated = false;
-            private Object _allocationLock = new Object();
+            private bool _is_allocated = false;
 
             private IntPtr _allocated_maxRegistersPerThread;
             private unsafe IntPtr _star_allocated_maxRegistersPerThread { get { return *((IntPtr*)(void*)_allocated_maxRegistersPerThread); } }
@@ -224,56 +223,53 @@ namespace Libcuda.Api.Native
 
             private void LowLevelAllocate()
             {
-                lock (_allocationLock)
+                if (!_is_allocated)
                 {
-                    if (!_allocated)
+                    // todo. there's a possibility of memory leak here
+                    // if mallocs crash in the middle of action
+                    // I'm cba to embrace the code in a number of try-finallies
+                    // so I leave this bugg here
+
+                    _allocated_maxRegistersPerThread = Marshal.AllocHGlobal(Marshal.SizeOf(MaxRegistersPerThread));
+                    Marshal.WriteInt32(_allocated_maxRegistersPerThread, MaxRegistersPerThread);
+
+                    _allocated_threadsPerBlock = Marshal.AllocHGlobal(Marshal.SizeOf(PlannedThreadsPerBlock));
+                    Marshal.WriteInt32(_allocated_threadsPerBlock, PlannedThreadsPerBlock);
+
+                    _allocated_wallTime = Marshal.AllocHGlobal(sizeof(float));
+
+                    var sizeofInfoLogBuffer = maxCharsInLogBuffer * sizeof(byte);
+                    _allocated_infoLogBuffer = Marshal.AllocHGlobal(sizeofInfoLogBuffer);
+                    ZeroMemory(_allocated_infoLogBuffer, (uint)sizeofInfoLogBuffer);
+                    Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
+                    _allocated_infoLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+                    Marshal.WriteIntPtr(_allocated_infoLogBufferSizeBytes, (IntPtr)sizeofInfoLogBuffer);
+
+                    var sizeofErrorLogBuffer = maxCharsInErrorBuffer * sizeof(byte);
+                    _allocated_errorLogBuffer = Marshal.AllocHGlobal(sizeofErrorLogBuffer);
+                    ZeroMemory(_allocated_errorLogBuffer, (uint)sizeofErrorLogBuffer);
+                    Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
+                    _allocated_errorLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
+                    Marshal.WriteIntPtr(_allocated_errorLogBufferSizeBytes, (IntPtr)sizeofErrorLogBuffer);
+
+                    _allocated_optimizationLevel = Marshal.AllocHGlobal(Marshal.SizeOf(OptimizationLevel));
+                    Marshal.WriteInt32(_allocated_optimizationLevel, OptimizationLevel);
+
+                    if (TargetFromContext)
                     {
-                        // todo. there's a possibility of memory leak here
-                        // if mallocs crash in the middle of action
-                        // I'm cba to embrace the code in a number of try-finallies
-                        // so I leave this bugg here
-
-                        _allocated_maxRegistersPerThread = Marshal.AllocHGlobal(Marshal.SizeOf(MaxRegistersPerThread));
-                        Marshal.WriteInt32(_allocated_maxRegistersPerThread, MaxRegistersPerThread);
-
-                        _allocated_threadsPerBlock = Marshal.AllocHGlobal(Marshal.SizeOf(PlannedThreadsPerBlock));
-                        Marshal.WriteInt32(_allocated_threadsPerBlock, PlannedThreadsPerBlock);
-
-                        _allocated_wallTime = Marshal.AllocHGlobal(sizeof(float));
-
-                        var sizeofInfoLogBuffer = maxCharsInLogBuffer * sizeof(byte);
-                        _allocated_infoLogBuffer = Marshal.AllocHGlobal(sizeofInfoLogBuffer);
-                        ZeroMemory(_allocated_infoLogBuffer, (uint)sizeofInfoLogBuffer);
-                        Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
-                        _allocated_infoLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-                        Marshal.WriteIntPtr(_allocated_infoLogBufferSizeBytes, (IntPtr)sizeofInfoLogBuffer);
-
-                        var sizeofErrorLogBuffer = maxCharsInErrorBuffer * sizeof(byte);
-                        _allocated_errorLogBuffer = Marshal.AllocHGlobal(sizeofErrorLogBuffer);
-                        ZeroMemory(_allocated_errorLogBuffer, (uint)sizeofErrorLogBuffer);
-                        Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
-                        _allocated_errorLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-                        Marshal.WriteIntPtr(_allocated_errorLogBufferSizeBytes, (IntPtr)sizeofErrorLogBuffer);
-
-                        _allocated_optimizationLevel = Marshal.AllocHGlobal(Marshal.SizeOf(OptimizationLevel));
-                        Marshal.WriteInt32(_allocated_optimizationLevel, OptimizationLevel);
-
-                        if (TargetFromContext)
-                        {
-                            _allocated_targetFromContext = Marshal.AllocHGlobal(sizeof(uint));
-                            Marshal.WriteInt32(_allocated_targetFromContext, 1);
-                        }
-                        else
-                        {
-                            _allocated_target = Marshal.AllocHGlobal(sizeof(uint));
-                            Marshal.WriteInt32(_allocated_target, (int)Target);
-                        }
-
-                        _allocated_fallbackStrategy = Marshal.AllocHGlobal(sizeof(uint));
-                        Marshal.WriteInt32(_allocated_fallbackStrategy, (int)CUjit_fallbackstrategy.PreferPtx);
-
-                        _allocated = true;
+                        _allocated_targetFromContext = Marshal.AllocHGlobal(sizeof(uint));
+                        Marshal.WriteInt32(_allocated_targetFromContext, 1);
                     }
+                    else
+                    {
+                        _allocated_target = Marshal.AllocHGlobal(sizeof(uint));
+                        Marshal.WriteInt32(_allocated_target, (int)Target);
+                    }
+
+                    _allocated_fallbackStrategy = Marshal.AllocHGlobal(sizeof(uint));
+                    Marshal.WriteInt32(_allocated_fallbackStrategy, (int)CUjit_fallbackstrategy.PreferPtx);
+
+                    _is_allocated = true;
                 }
             }
 

@@ -27,7 +27,7 @@ namespace Libcuda.Api.Run
             _type = value == null ? null : value.GetType();
             _value = value.AssertNotNull();
 
-            Initialize();
+            CopyHtoD();
         }
 
         public Object Value
@@ -53,7 +53,6 @@ namespace Libcuda.Api.Run
         }
 
         private bool _alreadyAcquiredResult = false;
-        private readonly Object _resultAcquisitionLock = new Object();
         public Object Result
         {
             get
@@ -65,20 +64,13 @@ namespace Libcuda.Api.Run
 
                     case ParameterDirection.InOut:
                     case ParameterDirection.Out:
-                        lock (_resultAcquisitionLock)
+                        if (!_alreadyAcquiredResult)
                         {
-                            if (!_alreadyAcquiredResult)
-                            {
-                                _value.GetType().IsArray.AssertTrue();
-                                using (var rawMem = _value.Pin())
-                                {
-                                    nvcuda.cuMemcpyDtoH(rawMem, _devicePtr, (uint)SizeInVRAM);
-                                    _alreadyAcquiredResult = true;
-                                }
-                            }
-
-                            return _value;
+                            CopyDtoH();
+                            _alreadyAcquiredResult = true;
                         }
+
+                        return _value;
 
                     default:
                         throw AssertionHelper.Fail();

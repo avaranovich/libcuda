@@ -18,6 +18,7 @@ namespace Libcuda.Api.Jit
         public int MaxRegistersPerThread { get; set; }
         public int PlannedThreadsPerBlock { get; set; }
 
+        // todo. cache jitted kernels
         public JitResult Compile(String ptx)
         {
             Log.TraceLine("Peforming JIT compilation...");

@@ -20,9 +20,7 @@ namespace Libcuda.Api.Run
     {
         public JittedFunction Function { get; private set; }
         public KernelArguments Args { get; set; }
-
-        private readonly Object _launchLock = new Object();
-        internal bool HasCompletedExecution = false;
+        private bool _hasCompletedExecution = false;
 
         public KernelInvocation(JittedFunction function, IEnumerable<KernelArgument> args)
         {
@@ -32,31 +30,28 @@ namespace Libcuda.Api.Run
 
         public KernelResult Launch(dim3 gridDim, dim3 blockDim)
         {
-            lock (_launchLock)
+            IsDisposed.AssertFalse();
+            Args.AssertNone(p => p.IsDisposed);
+            _hasCompletedExecution.AssertFalse();
+
+            var offsets = Args.Scanbe(0, (offset, arg, _) => offset + arg.SizeInArgList);
+            Args.Zip(offsets, (arg, offset) => arg.PassInto(this, offset));
+
+            try
             {
-                IsDisposed.AssertFalse();
-                Args.AssertNone(p => p.IsDisposed);
-                HasCompletedExecution.AssertFalse();
+                nvcuda.cuFuncSetBlockShape(Function, blockDim);
+                nvcuda.cuFuncSetSharedSize(Function, (uint)Function.SharedSizeBytes);
+                nvcuda.cuFuncSetCacheConfig(Function, CUfunc_cache.PreferNone);
+                nvcuda.cuParamSetSize(Function, (uint)Args.Select(p => p.SizeInArgList).Sum());
 
-                var offsets = Args.Scanbe(0, (offset, arg, _) => offset + arg.SizeInArgList);
-                Args.Zip(offsets, (arg, offset) => arg.Fill(this, offset));
-
-                try
-                {
-                    nvcuda.cuFuncSetBlockShape(Function, blockDim);
-                    nvcuda.cuFuncSetSharedSize(Function, (uint)Function.SharedSizeBytes);
-                    nvcuda.cuFuncSetCacheConfig(Function, CUfunc_cache.PreferNone);
-                    nvcuda.cuParamSetSize(Function, (uint)Args.Select(p => p.SizeInArgList).Sum());
-
-                    TraceBeforeLaunch(gridDim, blockDim);
-                    var wall_time = CudaProfiler.Benchmark(() => nvcuda.cuLaunchGrid(Function, gridDim));
-                    Log.TraceLine("Function execution succeeded in {0}." + Environment.NewLine, wall_time);
-                    return new KernelResult(this, wall_time);
-                }
-                finally 
-                {
-                    HasCompletedExecution = true;
-                }
+                TraceBeforeLaunch(gridDim, blockDim);
+                var wall_time = CudaProfiler.Benchmark(() => nvcuda.cuLaunchGrid(Function, gridDim));
+                Log.TraceLine("Function execution succeeded in {0}." + Environment.NewLine, wall_time);
+                return new KernelResult(this, wall_time);
+            }
+            finally 
+            {
+                _hasCompletedExecution = true;
             }
         }
 

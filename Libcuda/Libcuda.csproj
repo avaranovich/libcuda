@@ -56,6 +56,7 @@
     <Compile Include="Api\Native\DataTypes\CUjit_result.cs" />
     <Compile Include="Api\Native\nvcuda.contexts.cs" />
     <Compile Include="Api\Native\nvcuda.version.cs" />
+    <Compile Include="Api\Run\KernelArgument.DtoH.cs" />
     <Compile Include="CudaDriver.cs" />
     <Compile Include="CudaProfiler.cs" />
     <Compile Include="CudaVersions.cs" />
@@ -83,9 +84,9 @@
     <Compile Include="Api\Jit\JitResult.cs" />
     <Compile Include="Api\Jit\JittedFunction.cs" />
     <Compile Include="Api\Jit\JittedModule.cs" />
-    <Compile Include="Api\Run\KernelArgument.Fill.cs" />
+    <Compile Include="Api\Run\KernelArgument.Pass.cs" />
     <Compile Include="Api\Run\KernelArgument.Core.cs" />
-    <Compile Include="Api\Run\KernelArgument.Init.cs" />
+    <Compile Include="Api\Run\KernelArgument.HtoD.cs" />
     <Compile Include="Api\Run\KernelArgumentHelper.cs" />
     <Compile Include="Api\Run\KernelArguments.cs" />
     <Compile Include="Api\Run\KernelInvocation.cs" />

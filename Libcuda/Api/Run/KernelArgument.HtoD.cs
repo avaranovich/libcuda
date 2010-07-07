@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Libcuda.Api.Native.DataTypes;
 using Libcuda.DataTypes;
 using Libcuda.Api.Native;
-using Libcuda.Exceptions;
 using XenoGears.Assertions;
 using XenoGears.Functional;
 using XenoGears.Reflection;
@@ -13,7 +11,7 @@ namespace Libcuda.Api.Run
 {
     public partial class KernelArgument
     {
-        private void Initialize()
+        private void CopyHtoD()
         {
             if (_type.IsCudaPrimitive())
             {
@@ -44,7 +42,7 @@ namespace Libcuda.Api.Run
                 }
                 else if (_type.IsClass)
                 {
-                    if (_value.IsArray())
+                    if (_type.IsArray())
                     {
                         var array = _value.AssertCast<Array>();
                         var t_el = _type.GetElementType();

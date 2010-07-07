@@ -7,7 +7,7 @@ namespace Libcuda.Api.Run
 {
     public partial class KernelArgument
     {
-        internal void Fill(KernelInvocation invocation, int offset)
+        internal void PassInto(KernelInvocation invocation, int offset)
         {
             if (_type.IsCudaPrimitive())
             {
