@@ -8,7 +8,6 @@ using XenoGears.Functional;
 
 namespace Libcuda.Api.Jit
 {
-    [DebuggerNonUserCode]
     public class JitResult
     {
         public HardwareIsa CompilationTarget { get; set; }

@@ -1,13 +1,15 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using Libcuda.Api.Jit;
+using Libcuda.Api.Run;
 using NUnit.Framework;
 using XenoGears.Functional;
-using XenoGears.Logging;
 using XenoGears.Reflection;
 using XenoGears.Reflection.Attributes;
 using XenoGears.Reflection.Generics;
 using XenoGears.Strings;
+using Log=XenoGears.Logging.Log;
 
 namespace Libcuda.Playground
 {
@@ -26,6 +28,9 @@ namespace Libcuda.Playground
                 .Where(t => !t.Name.Contains("__StaticArrayInit"))
                 .Where(t => !t.IsEnum)
                 .Where(t => !t.IsDelegate())
+                // exceptions for meaty logic
+                .Where(t => t.Namespace != typeof(JitCompiler).Namespace)
+                .Where(t => t.Namespace != typeof(KernelInvocation).Namespace)
                 .ToReadOnly();
 
             if (failed_types.IsNotEmpty())

@@ -12,7 +12,6 @@ using XenoGears.Functional;
 
 namespace Libcuda.Api.Jit
 {
-    [DebuggerNonUserCode]
     public class JittedFunction : Disposable
     {
         public String Name { get; private set; }

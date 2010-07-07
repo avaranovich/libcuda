@@ -13,7 +13,6 @@ using XenoGears.Strings;
 
 namespace Libcuda.Api.Run
 {
-    [DebuggerNonUserCode]
     public class KernelInvocation
     {
         public JittedFunction Function { get; private set; }

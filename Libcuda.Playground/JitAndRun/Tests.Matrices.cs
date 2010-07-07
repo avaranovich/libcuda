@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using XenoGears.Assertions;
 using XenoGears.Functional;
-using XenoGears.Logging;
 
 namespace Libcuda.Playground.JitAndRun
 {
@@ -11,8 +10,8 @@ namespace Libcuda.Playground.JitAndRun
         private float[,] RandMatrix(int height, int width)
         {
             var rng = new Random((int)DateTime.Now.Ticks);
-            Func<int> rand = () => rng.Next() % 3;
-//            Func<int> rand = () => 1;
+//            Func<int> rand = () => rng.Next() % 3;
+            Func<int> rand = () => 1;
 
             var matrix = new float[height, width];
             for (var i = 0; i < height; i++)

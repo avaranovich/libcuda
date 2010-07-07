@@ -1,15 +1,12 @@
 using System;
-using System.Diagnostics;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
-using Libcuda.Exceptions;
 using XenoGears.Assertions;
 using XenoGears.Traits.Disposable;
 using XenoGears.Unsafe;
 
 namespace Libcuda.Api.Run
 {
-    [DebuggerNonUserCode]
     public partial class KernelArgument : Disposable
     {
         public ParameterDirection Direction { get; private set; }
