@@ -16,7 +16,7 @@ namespace Libcuda.Playground.JitAndRun
             Traces.Init.Disable();
             var kc = KernelMul(a, b);
             AssertAreTheSame(rc, kc);
-            VerifyResult();
+            VerifyResult(Out.ToString());
         }
 
         [Test]
@@ -29,7 +29,7 @@ namespace Libcuda.Playground.JitAndRun
             Traces.Init.Disable();
             var kc = KernelMul(a, b);
             AssertAreTheSame(rc, kc);
-            VerifyResult();
+            VerifyResult(Out.ToString());
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace Libcuda.Playground.JitAndRun
             Traces.Init.Disable();
             var kc = KernelMul(a, b);
             AssertAreTheSame(rc, kc);
-            VerifyResult();
+            VerifyResult(Out.ToString());
         }
     }
 }

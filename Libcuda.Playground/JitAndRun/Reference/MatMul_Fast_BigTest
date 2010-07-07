@@ -235,7 +235,7 @@ $LDWend__Z17MatMulKernel_Fast6MatrixS_S_:
     }} // _Z17MatMulKernel_Fast6MatrixS_S_
 ************************************************************************************************************************
 
-: Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx_9'
+: Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx'
 
 JIT compilation succeeded in 00:00:00 and produced CUmodule <Handle>.
 
