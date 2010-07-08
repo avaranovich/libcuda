@@ -15,7 +15,7 @@ using XenoGears.Versioning;
 [assembly: InternalsVisibleTo("Libcuda.Playground")]
 
 [assembly: Guid("DE888EF0-78FA-4CB2-88C8-0180A3D7F523")]
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("3.1.*")]
 [assembly: AssemblyBuiltFrom(Repository = "$"CODEBASE"$", Revision = "$REVISION$", CodebaseHash = "$CODEHASH$")]
 [assembly: AssemblyBuiltAt(Timestamp = "$TIMESTAMP$")]
 [assembly: AssemblyBuiltBy(UserHash = "$USERHASH$")]
