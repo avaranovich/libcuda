@@ -1,0 +1,1 @@
+Visit project's download page (http://code.google.com/p/libcuda/downloads/list) to dig into CUDA reference manual.
