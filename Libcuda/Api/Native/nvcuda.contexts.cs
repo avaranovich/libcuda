@@ -85,7 +85,7 @@ namespace Libcuda.Api.Native
                 Log.WriteLine("Creating CUDA context for device #0...");
                 _ctx = cuCtxCreate(CUctx_flags.None, device.Handle);
                 Log.WriteLine("Success.");
-                Log.WriteLine(String.Empty);
+                Log.WriteLine();
             }
 
             ~GlobalContext()

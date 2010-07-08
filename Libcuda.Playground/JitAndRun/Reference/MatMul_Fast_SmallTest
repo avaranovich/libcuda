@@ -1,1 +1,266 @@
-﻿
+﻿Peforming JIT compilation...
+    PTX source text                              : (see below)
+    Target hardware ISA                          : (determined from context)
+    Actual hardware ISA                          : SM_13
+    Max registers per thread                     : 0
+    Planned threads per block                    : 54
+    Optimization level (0 - 4, higher is better) : 4
+
+************************************************************************************************************************
+    .version 1.4
+    .target sm_13
+    // compiled with c:\Program Files\CUDA\Toolkit\bin/../open64/lib//be.exe
+    // nvopencc 2.3 built on 2009-08-03
+
+    //-----------------------------------------------------------
+    // Compiling C:\DOCUME~1\xeno.by\LOCALS~1\Temp/tmpxft_00001e68_00000000-9_matmul_fast.cpp3.i (C:/DOCUME~1/xeno.by/LOCALS~1/Temp/ccBI#.a03520)
+    //-----------------------------------------------------------
+
+    //-----------------------------------------------------------
+    // Options:
+    //-----------------------------------------------------------
+    //  Target:ptx, ISA:sm_13, Endian:little, Pointer Size:32
+    //  -O3    (Optimization level)
+    //  -g0    (Debug level)
+    //  -m2    (Report advisories)
+    //-----------------------------------------------------------
+
+    .file    1    "C:\DOCUME~1\xeno.by\LOCALS~1\Temp/tmpxft_00001e68_00000000-8_matmul_fast.cudafe2.gpu"
+    .file    2    "d:\projects\active\conflux\playground.cuda\matrix.h"
+    .file    3    "../matmul_fast.cu"
+    .file    4    "C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE\crtdefs.h"
+    .file    5    "c:\Program Files\CUDA\Toolkit\include\crt/device_runtime.h"
+    .file    6    "c:\Program Files\CUDA\Toolkit\include\host_defines.h"
+    .file    7    "c:\Program Files\CUDA\Toolkit\include\builtin_types.h"
+    .file    8    "c:\program files\cuda\toolkit\include\device_types.h"
+    .file    9    "c:\program files\cuda\toolkit\include\driver_types.h"
+    .file    10    "c:\program files\cuda\toolkit\include\texture_types.h"
+    .file    11    "c:\program files\cuda\toolkit\include\vector_types.h"
+    .file    12    "c:\program files\cuda\toolkit\include\host_defines.h"
+    .file    13    "c:\Program Files\CUDA\Toolkit\include\device_launch_parameters.h"
+    .file    14    "c:\program files\cuda\toolkit\include\crt\storage_class.h"
+    .file    15    "C:\Program Files\Microsoft Visual Studio 9.0\VC\INCLUDE\time.h"
+    .file    16    "c:\Program Files\CUDA\Toolkit\include\common_functions.h"
+    .file    17    "c:\program files\cuda\toolkit\include\crt/func_macro.h"
+    .file    18    "c:\program files\cuda\toolkit\include\math_functions.h"
+    .file    19    "c:\program files\cuda\toolkit\include\device_functions.h"
+    .file    20    "c:\program files\cuda\toolkit\include\math_constants.h"
+    .file    21    "c:\program files\cuda\toolkit\include\sm_11_atomic_functions.h"
+    .file    22    "c:\program files\cuda\toolkit\include\sm_12_atomic_functions.h"
+    .file    23    "c:\program files\cuda\toolkit\include\sm_13_double_functions.h"
+    .file    24    "c:\program files\cuda\toolkit\include\texture_fetch_functions.h"
+    .file    25    "c:\program files\cuda\toolkit\include\math_functions_dbl_ptx3.h"
+
+
+    .entry _Z17MatMulKernel_Fast6MatrixS_S_ (
+        .param .align 4 .b8 __cudaparm__Z17MatMulKernel_Fast6MatrixS_S__A[12],
+        .param .align 4 .b8 __cudaparm__Z17MatMulKernel_Fast6MatrixS_S__B[12],
+        .param .align 4 .b8 __cudaparm__Z17MatMulKernel_Fast6MatrixS_S__C[12])
+    {{
+    .reg .u32 %r<97>;
+    .reg .f32 %f<7>;
+    .reg .f64 %fd<6>;
+    .reg .pred %p<11>;
+    .shared .align 4 .b8 __cuda_bsub_shared36[1024];
+    .shared .align 4 .b8 __cuda_asub_shared1060[1024];
+    .loc    3    89    0
+$LBB1__Z17MatMulKernel_Fast6MatrixS_S_:
+    .loc    3    94    0
+    ld.param.s32     %r1, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__A+0];
+    cvt.s32.u16     %r2, %ntid.x;
+    cvt.rn.f64.s32     %fd1, %r1;
+    cvt.rn.f64.s32     %fd2, %r2;
+    div.rn.f64     %fd3, %fd1, %fd2;
+    cvt.rpi.f64.f64     %fd4, %fd3;
+    cvt.rzi.s32.f64     %r3, %fd4;
+    cvt.u32.u16     %r4, %tid.y;
+    cvt.u32.u16     %r5, %tid.x;
+    cvt.u32.u16     %r6, %ntid.y;
+    cvt.s32.u16     %r7, %ctaid.y;
+    cvt.s32.u16     %r8, %ctaid.x;
+    mov.u32     %r9, 0;
+    setp.le.s32     %p1, %r3, %r9;
+    mov.f32     %f1, 0f00000000;         // 0
+    @%p1 bra     $Lt_0_8962;
+    mov.s32     %r10, 1;
+    max.s32     %r11, %r3, %r10;
+    mul.lo.u32     %r12, %r8, %r2;
+    mul.lo.u32     %r13, %r7, %r6;
+    mov.u32     %r14, 0;
+    mov.u32     %r15, 0;
+    ld.param.s32     %r16, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__B+0];
+    sub.s32     %r17, %r16, %r12;
+    ld.param.s32     %r18, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__A+4];
+    sub.s32     %r19, %r18, %r13;
+    mov.s32     %r20, %r1;
+    min.u32     %r21, %r17, %r2;
+    min.u32     %r22, %r19, %r6;
+    setp.gt.u32     %p2, %r21, %r5;
+    setp.gt.u32     %p3, %r22, %r4;
+    selp.s32     %r23, 1, 0, %p2;
+    selp.s32     %r24, 1, 0, %p3;
+    ld.param.s32     %r25, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__B+4];
+    mov.s32     %r26, 0;
+    mov.u32     %r27, __cuda_bsub_shared36;
+    mov.u32     %r28, __cuda_asub_shared1060;
+    mov.s32     %r29, %r11;
+$Lt_0_5890:
+ //<loop> Loop body line 94, nesting depth: 1, estimated iterations: unknown
+    .loc    3    99    0
+    mov.s32     %r30, %r14;
+    sub.s32     %r31, %r1, %r30;
+    min.u32     %r32, %r2, %r31;
+    set.lt.u32.u32     %r33, %r5, %r32;
+    neg.s32     %r34, %r33;
+    and.b32     %r35, %r24, %r34;
+    mov.u32     %r36, 0;
+    setp.eq.s32     %p4, %r35, %r36;
+    @%p4 bra     $Lt_0_6146;
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    .loc    3    101    0
+    ld.param.u32     %r37, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__A+8];
+    add.s32     %r38, %r30, %r5;
+    add.s32     %r39, %r13, %r4;
+    mul.lo.s32     %r40, %r1, %r39;
+    add.s32     %r41, %r38, %r40;
+    mul.lo.u32     %r42, %r41, 4;
+    add.u32     %r43, %r37, %r42;
+    ld.global.f32     %f2, [%r43+0];
+    mul24.lo.u32     %r44, %r4, 16;
+    add.u32     %r45, %r5, %r44;
+    mul.lo.u32     %r46, %r45, 4;
+    add.u32     %r47, %r28, %r46;
+    st.shared.f32     [%r47+0], %f2;
+$Lt_0_6146:
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    .loc    3    103    0
+    sub.s32     %r48, %r25, %r15;
+    min.u32     %r49, %r6, %r48;
+    set.lt.u32.u32     %r50, %r4, %r49;
+    neg.s32     %r51, %r50;
+    and.b32     %r52, %r23, %r51;
+    mov.u32     %r53, 0;
+    setp.eq.s32     %p5, %r52, %r53;
+    @%p5 bra     $Lt_0_6658;
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    .loc    3    105    0
+    ld.param.u32     %r54, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__B+8];
+    add.s32     %r55, %r12, %r5;
+    add.s32     %r56, %r15, %r4;
+    mul.lo.s32     %r57, %r16, %r56;
+    add.s32     %r58, %r55, %r57;
+    mul.lo.u32     %r59, %r58, 4;
+    add.u32     %r60, %r54, %r59;
+    ld.global.f32     %f3, [%r60+0];
+    mul24.lo.u32     %r61, %r4, 16;
+    add.u32     %r62, %r5, %r61;
+    mul.lo.u32     %r63, %r62, 4;
+    add.u32     %r64, %r27, %r63;
+    st.shared.f32     [%r64+0], %f3;
+$Lt_0_6658:
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    .loc    3    107    0
+    bar.sync     0;
+    .loc    3    109    0
+    min.s32     %r65, %r20, %r2;
+    mov.u32     %r66, 0;
+    setp.le.s32     %p6, %r65, %r66;
+    @%p6 bra     $Lt_0_7170;
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    mov.s32     %r67, %r65;
+    mul24.lo.u32     %r68, %r4, 64;
+    mul24.lo.u32     %r69, %r5, 4;
+    add.u32     %r70, %r68, %r28;
+    add.u32     %r71, %r69, %r27;
+    mul.lo.u32     %r72, %r65, 4;
+    add.s32     %r73, %r68, %r72;
+    add.u32     %r74, %r73, %r28;
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    mov.s32     %r75, %r67;
+$Lt_0_7682:
+ //<loop> Loop body line 109, nesting depth: 1, estimated iterations: unknown
+    .loc    3    111    0
+    ld.shared.f32     %f4, [%r70+0];
+    ld.shared.f32     %f5, [%r71+0];
+    mad.f32     %f1, %f4, %f5, %f1;
+    add.u32     %r71, %r71, 64;
+    add.u32     %r70, %r70, 4;
+    setp.ne.u32     %p7, %r70, %r74;
+    @%p7 bra     $Lt_0_7682;
+$Lt_0_7170:
+ //<loop> Part of loop body line 94, head labeled $Lt_0_5890
+    .loc    3    113    0
+    bar.sync     0;
+    .loc    3    94    0
+    add.s32     %r26, %r26, 1;
+    add.s32     %r76, %r2, %r30;
+    sub.s32     %r20, %r20, %r2;
+    add.u32     %r15, %r15, %r6;
+    mov.s32     %r14, %r76;
+    setp.gt.s32     %p8, %r3, %r26;
+    @%p8 bra     $Lt_0_5890;
+    bra.uni     $Lt_0_5378;
+$Lt_0_8962:
+    mul.lo.u32     %r12, %r8, %r2;
+    mul.lo.u32     %r13, %r7, %r6;
+$Lt_0_5378:
+    .loc    3    116    0
+    ld.param.s32     %r77, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__C+0];
+    ld.param.s32     %r78, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__C+4];
+    sub.s32     %r79, %r78, %r13;
+    min.u32     %r80, %r6, %r79;
+    set.lt.u32.u32     %r81, %r4, %r80;
+    neg.s32     %r82, %r81;
+    sub.s32     %r83, %r77, %r12;
+    min.u32     %r84, %r2, %r83;
+    set.lt.u32.u32     %r85, %r5, %r84;
+    neg.s32     %r86, %r85;
+    and.b32     %r87, %r82, %r86;
+    mov.u32     %r88, 0;
+    setp.eq.s32     %p9, %r87, %r88;
+    @%p9 bra     $Lt_0_8450;
+    .loc    3    82    0
+    ld.param.u32     %r89, [__cudaparm__Z17MatMulKernel_Fast6MatrixS_S__C+8];
+    add.s32     %r90, %r12, %r5;
+    add.s32     %r91, %r13, %r4;
+    mul.lo.s32     %r92, %r77, %r91;
+    add.s32     %r93, %r90, %r92;
+    mul.lo.u32     %r94, %r93, 4;
+    add.u32     %r95, %r89, %r94;
+    st.global.f32     [%r95+0], %f1;
+$Lt_0_8450:
+    .loc    3    119    0
+    exit;
+$LDWend__Z17MatMulKernel_Fast6MatrixS_S_:
+    }} // _Z17MatMulKernel_Fast6MatrixS_S_
+************************************************************************************************************************
+
+: Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx'
+
+JIT compilation succeeded in 00:00:00 and produced CUmodule <Handle>.
+
+Loading entry points of CUmodule <Handle>...
+Found entry point _Z17MatMulKernel_Fast6MatrixS_S_...
+Successfully resolved it as CUfunction <Handle>.
+    Max threads per block        : 512
+    Shared memory requirements   : 2100 bytes
+    Constant memory requirements : 0 bytes
+    Local memory requirements    : 0 bytes
+    Register memory requirements : 19 registers
+    PTX version                  : SM_13
+    Binary version               : SM_13
+
+Launching function _Z17MatMulKernel_Fast6MatrixS_S_ (CUfunction <Handle>)...
+Grid is configured as (9, 6, 1): blockdim is (9, 6, 1), griddim is (1, 1, 1)
+    +0000 In  15                (0 bytes in VRAM)
+    +0004 In  6                 (0 bytes in VRAM)
+    +0008 In  System.Single[,]  (360 bytes in VRAM)
+    +0012 In  9                 (0 bytes in VRAM)
+    +0016 In  15                (0 bytes in VRAM)
+    +0020 In  System.Single[,]  (540 bytes in VRAM)
+    +0024 In  9                 (0 bytes in VRAM)
+    +0028 In  6                 (0 bytes in VRAM)
+    +0032 Out System.Single[,]  (216 bytes in VRAM)
+    ***********************************************
+    0036                        (1116 bytes in VRAM)
+Function execution succeeded in <TimeSpan> (ε = 0.5 μs).
