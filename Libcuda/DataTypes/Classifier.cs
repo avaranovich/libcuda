@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Half = Libcuda.DataTypes.half;
 
 namespace Libcuda.DataTypes
 {
@@ -21,10 +22,27 @@ namespace Libcuda.DataTypes
             _primitives.Add(typeof(UInt32));
             _primitives.Add(typeof(Int64));
             _primitives.Add(typeof(UInt64));
+            _primitives.Add(typeof(Half));
             _primitives.Add(typeof(Single));
             _primitives.Add(typeof(Double));
 
             _vectors.Add(typeof(dim3));
+            _vectors.Add(typeof(sbyte1));
+            _vectors.Add(typeof(sbyte2));
+            _vectors.Add(typeof(sbyte3));
+            _vectors.Add(typeof(sbyte4));
+            _vectors.Add(typeof(byte1));
+            _vectors.Add(typeof(byte2));
+            _vectors.Add(typeof(byte3));
+            _vectors.Add(typeof(byte4));
+            _vectors.Add(typeof(short1));
+            _vectors.Add(typeof(short2));
+            _vectors.Add(typeof(short3));
+            _vectors.Add(typeof(short4));
+            _vectors.Add(typeof(ushort1));
+            _vectors.Add(typeof(ushort2));
+            _vectors.Add(typeof(ushort3));
+            _vectors.Add(typeof(ushort4));
             _vectors.Add(typeof(int1));
             _vectors.Add(typeof(int2));
             _vectors.Add(typeof(int3));
@@ -37,6 +55,10 @@ namespace Libcuda.DataTypes
             _vectors.Add(typeof(long2));
             _vectors.Add(typeof(ulong1));
             _vectors.Add(typeof(ulong2));
+            _vectors.Add(typeof(half1));
+            _vectors.Add(typeof(half2));
+            _vectors.Add(typeof(half3));
+            _vectors.Add(typeof(half4));
             _vectors.Add(typeof(float1));
             _vectors.Add(typeof(float2));
             _vectors.Add(typeof(float3));
