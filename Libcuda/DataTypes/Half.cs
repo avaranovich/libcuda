@@ -3,8 +3,9 @@
 namespace Libcuda.DataTypes
 {
     [DebuggerNonUserCode]
-    public abstract class half
+    public struct half
     {
         // todo. implement this (half is a synonym for float16)
+        internal short _fillerForSizeof;
     }
 }
