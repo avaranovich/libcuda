@@ -5,9 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Libcuda.Api.DataTypes;
 using XenoGears.Assertions;
 using XenoGears.Functional;
-using XenoGears.Threading;
 using XenoGears.Traits.Disposable;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
@@ -23,18 +23,15 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUjit_result cuModuleLoadDataEx(String ptx, CUjit_options options)
         {
-            using (NativeThread.Affinitize(_affinity))
-            {
-                var image = Marshal.StringToHGlobalAnsi(ptx);
-                try { return cuModuleLoadDataEx(image, options); }
-                finally { Marshal.FreeHGlobal(image); }
-            }
+            var image = Marshal.StringToHGlobalAnsi(ptx);
+            try { return cuModuleLoadDataEx(image, options); }
+            finally { Marshal.FreeHGlobal(image); }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUjit_result cuModuleLoadDataEx(IntPtr image, CUjit_options options)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -70,7 +67,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         #region Murky details of converting CUjit_options into the format expected by nativeModuleLoadDataEx
@@ -112,7 +109,7 @@ namespace Libcuda.Api.Native
                 }
             }
 
-            public unsafe TimeSpan WallTime
+            public unsafe ElapsedTime WallTime
             {
                 get
                 {
@@ -125,7 +122,7 @@ namespace Libcuda.Api.Native
 
                     var rawBytes = BitConverter.GetBytes(raw);
                     var wallTime = BitConverter.ToSingle(rawBytes, 0);
-                    return TimeSpan.FromMilliseconds(wallTime);
+                    return new ElapsedTime(wallTime);
                 }
             }
 
@@ -337,7 +334,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuModuleUnload(CUmodule mod)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -356,7 +353,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuModuleGetFunction")]
@@ -366,7 +363,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUfunction cuModuleGetFunction(CUmodule hmod, String name)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -387,7 +384,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
     }
 }

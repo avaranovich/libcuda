@@ -5,7 +5,6 @@ using System.Text;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
-using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -18,7 +17,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetCount()
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -39,7 +38,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuDeviceGet")]
@@ -49,7 +48,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdevice cuDeviceGet(int ordinal)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -70,7 +69,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuDeviceGetName", CharSet = CharSet.Ansi)]
@@ -80,7 +79,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static String cuDeviceGetName(CUdevice dev)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -101,22 +100,22 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuDeviceComputeCapability")]
         // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUDEVICE_g2f36c6412efa2b6b89feefa233fb7519.html
-        private static extern CUresult cuDeviceComputeCapability(out int major, out int minor, CUdevice dev);
+        private static extern CUresult nativeDeviceComputeCapability(out int major, out int minor, CUdevice dev);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static HardwareIsa cuDeviceComputeCapability(CUdevice dev)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
                     int major, minor;
-                    var error = cuDeviceComputeCapability(out major, out minor, dev);
+                    var error = nativeDeviceComputeCapability(out major, out minor, dev);
                     if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
                     return (HardwareIsa)(major * 10 + minor);
                 }
@@ -132,7 +131,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuDeviceGetAttribute")]
@@ -142,7 +141,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetAttribute(CUdevice_attribute attrib, CUdevice dev)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -163,28 +162,25 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static bool cuDeviceGetFlag(CUdevice_attribute attrib, CUdevice dev)
         {
-            using (NativeThread.Affinitize(_affinity))
+            var value = cuDeviceGetAttribute(attrib, dev);
+            if (value == 0)
             {
-                var value = cuDeviceGetAttribute(attrib, dev);
-                if (value == 0)
-                {
-                    return false;
-                }
-                else if (value == 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    var fex = new FormatException(String.Format("Attribute \"{0}\" has value \"{1}\" which isn't convertible to bool.", attrib, value));
-                    throw new CudaException(CudaError.InvalidValue, fex);
-                }
+                return false;
+            }
+            else if (value == 1)
+            {
+                return true;
+            }
+            else
+            {
+                var fex = new FormatException(String.Format("Attribute \"{0}\" has value \"{1}\" which isn't convertible to bool.", attrib, value));
+                throw new CudaException(CudaError.InvalidValue, fex);
             }
         }
 
@@ -195,7 +191,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static uint cuDeviceTotalMem(CUdevice dev)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -216,7 +212,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Libcuda.Api.DataTypes;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
-using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -16,7 +16,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUevent cuEventCreate(CUevent_flags Flags)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -37,7 +37,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuEventDestroy")]
@@ -47,7 +47,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventDestroy(CUevent hEvent)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -66,7 +66,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuEventRecord")]
@@ -74,18 +74,9 @@ namespace Libcuda.Api.Native
         private static extern CUresult nativeEventRecord(CUevent hEvent, CUstream hStream);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void cuEventRecord(CUevent hEvent)
-        {
-            using (NativeThread.Affinitize(_affinity))
-            {
-                cuEventRecord(hEvent, CUstream.Null);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventRecord(CUevent hEvent, CUstream hStream)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -104,7 +95,13 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void cuEventRecord(CUevent hEvent)
+        {
+            cuEventRecord(hEvent, CUstream.Null);
         }
 
         [DllImport("nvcuda", EntryPoint = "cuEventSynchronize")]
@@ -114,7 +111,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventSynchronize(CUevent hEvent)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -133,7 +130,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuEventElapsedTime")]
@@ -141,9 +138,9 @@ namespace Libcuda.Api.Native
         private static extern CUresult nativeEventElapsedTime(out float pMilliseconds, CUevent hStart, CUevent hEnd);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static CUelapsed_time cuEventElapsedTime(CUevent hStart, CUevent hEnd)
+        public static ElapsedTime cuEventElapsedTime(CUevent hStart, CUevent hEnd)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -152,7 +149,7 @@ namespace Libcuda.Api.Native
                     if (error != CUresult.CUDA_SUCCESS) throw new CudaException(error);
 
                     // note. cannot use TimeSpan here because it ain't work with fractions of milliseconds
-                    return new CUelapsed_time(milliseconds);
+                    return new ElapsedTime(milliseconds);
                 }
                 catch (CudaException)
                 {
@@ -166,7 +163,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
     }
 }

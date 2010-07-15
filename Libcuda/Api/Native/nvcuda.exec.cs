@@ -6,7 +6,6 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.DataTypes;
 using Libcuda.Exceptions;
 using XenoGears.Assertions;
-using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -19,7 +18,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSeti(CUfunction hfunc, int offset, uint value)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -38,7 +37,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuParamSetf")]
@@ -48,7 +47,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetf(CUfunction hfunc, int offset, float value)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -67,7 +66,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuParamSetv")]
@@ -77,7 +76,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetv(CUfunction hfunc, int offset, Object obj)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -108,7 +107,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuParamSetSize")]
@@ -118,7 +117,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetSize(CUfunction hfunc, uint numbytes)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -137,7 +136,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuFuncGetAttribute")]
@@ -147,7 +146,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuFuncGetAttribute(CUfunction_attribute attrib, CUfunction hfunc)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -168,7 +167,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuFuncSetSharedSize")]
@@ -178,7 +177,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetSharedSize(CUfunction hfunc, uint bytes)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -197,7 +196,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuFuncSetCacheConfig")]
@@ -207,7 +206,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -226,7 +225,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuFuncSetBlockShape")]
@@ -234,18 +233,9 @@ namespace Libcuda.Api.Native
         private static extern CUresult nativeFuncSetBlockShape(CUfunction hfunc, int x, int y, int z);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void cuFuncSetBlockShape(CUfunction hfunc, dim3 dim)
-        {
-            using (NativeThread.Affinitize(_affinity))
-            {
-                cuFuncSetBlockShape(hfunc, dim.X, dim.Y, dim.Z);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -269,7 +259,13 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void cuFuncSetBlockShape(CUfunction hfunc, dim3 dim)
+        {
+            cuFuncSetBlockShape(hfunc, dim.X, dim.Y, dim.Z);
         }
 
         [DllImport("nvcuda", EntryPoint = "cuLaunchGrid")]
@@ -277,20 +273,9 @@ namespace Libcuda.Api.Native
         private static extern CUresult nativeLaunchGrid(CUfunction f, int grid_width, int grid_height);
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void cuLaunchGrid(CUfunction f, dim3 dim)
-        {
-            using (NativeThread.Affinitize(_affinity))
-            {
-                // wow here we ain't able to specify the Z dimension
-                if (dim.Z != 1) throw new CudaException(CudaError.InvalidGridDim);
-                cuLaunchGrid(f, dim.X, dim.Y);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuLaunchGrid(CUfunction f, int grid_width, int grid_height)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -314,7 +299,15 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void cuLaunchGrid(CUfunction f, dim3 dim)
+        {
+            // wow here we ain't able to specify the Z dimension
+            if (dim.Z != 1) throw new CudaException(CudaError.InvalidGridDim);
+            cuLaunchGrid(f, dim.X, dim.Y);
         }
     }
 }

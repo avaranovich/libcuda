@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
-using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -18,7 +17,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void cuInit(CUinit_flags Flags)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -37,7 +36,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
     }
 }

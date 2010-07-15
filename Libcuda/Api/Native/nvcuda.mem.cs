@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
-using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -16,7 +15,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdeviceptr cuMemAlloc(uint bytesize)
         {
-            using (NativeThread.Affinitize(_affinity))
+            return MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -37,7 +36,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuMemFree")]
@@ -47,7 +46,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemFree(CUdeviceptr dptr)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -66,7 +65,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuMemcpyHtoD")]
@@ -76,7 +75,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyHtoD(CUdeviceptr dstDevice, IntPtr srcHost, uint ByteCount)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -95,7 +94,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
 
         [DllImport("nvcuda", EntryPoint = "cuMemcpyDtoH")]
@@ -105,7 +104,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyDtoH(IntPtr dstHost, CUdeviceptr srcDevice, uint ByteCount)
         {
-            using (NativeThread.Affinitize(_affinity))
+            MarshalToWorkerThread(() =>
             {
                 try
                 {
@@ -124,7 +123,7 @@ namespace Libcuda.Api.Native
                 {
                     throw new CudaException(CudaError.Unknown, e);
                 }
-            }
+            });
         }
     }
 }
