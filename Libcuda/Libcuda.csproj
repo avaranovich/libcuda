@@ -63,7 +63,6 @@
     <Compile Include="Api\Native\DataTypes\CUctx_flags.cs" />
     <Compile Include="Api\DataTypes\ElapsedTime.cs" />
     <Compile Include="Api\Native\DataTypes\CUinit_flags.cs" />
-    <Compile Include="Api\Native\DataTypes\CUjit_exception.cs" />
     <Compile Include="Api\Native\DataTypes\CUjit_options.cs" />
     <Compile Include="Api\Native\DataTypes\CUjit_result.cs" />
     <Compile Include="Api\Native\nvcuda.contexts.cs" />

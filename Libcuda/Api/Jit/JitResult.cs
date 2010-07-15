@@ -30,23 +30,17 @@ namespace Libcuda.Api.Jit
             CompilationMaxRegistersPerThread = compiler.MaxRegistersPerThread;
             CompilationPlannedThreadsPerBlock = compiler.PlannedThreadsPerBlock;
             CompilationWallTime = result.WallTime;
-            CompilationInfoLog = result.InfoLog;
-            CompilationErrorLog = result.ErrorLog;
+            CompilationInfoLog = result.InfoLog == String.Empty ? null : result.InfoLog;
+            if (CompilationInfoLog != null) Log.WriteLine(CompilationInfoLog + Environment.NewLine);
+            CompilationErrorLog = result.ErrorLog == String.Empty ? null : result.ErrorLog;
 
             Ptx = ptx;
             ErrorCode = (CudaError)result.ErrorCode;
-            Module = ErrorCode == CudaError.Success ? new JittedModule(this, result.Module) : null;
 
-            if (Module != null)
+            if (ErrorCode == CudaError.Success)
             {
-                if (result.InfoLog.IsNeitherNullNorEmpty())
-                {
-                    Log.WriteLine(result.InfoLog);
-                    Log.WriteLine();
-                }
-
-                Log.WriteLine("JIT compilation succeeded in {0} and produced {1}.", CompilationWallTime, Module);
-                Log.WriteLine();
+                Module = new JittedModule(this, result.Module);
+                Log.WriteLine("JIT compilation succeeded in {0} and produced {1}." + Environment.NewLine, CompilationWallTime, Module);
 
                 Log.WriteLine("Loading entry points of {0}...", Module);
                 Module.Functions.ForEach(function =>
@@ -65,14 +59,8 @@ namespace Libcuda.Api.Jit
             }
             else
             {
-                if (result.InfoLog.IsNeitherNullNorEmpty())
-                {
-                    Log.WriteLine(result.InfoLog);
-                    Log.WriteLine();
-                }
-
-                Log.WriteLine("JIT compilation failed in {0}.", CompilationWallTime);
-                Log.WriteLine();
+                Log.WriteLine("JIT compilation failed in {0}." + Environment.NewLine, CompilationWallTime);
+                throw new JitException(this);
             }
         }
     }

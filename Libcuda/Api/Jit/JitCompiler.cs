@@ -3,7 +3,6 @@ using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Versions;
 using XenoGears.Functional;
-using XenoGears.Strings;
 using XenoGears.Assertions;
 
 namespace Libcuda.Api.Jit
@@ -42,16 +41,8 @@ namespace Libcuda.Api.Jit
             options.Target = Target.ToCUjit_target();
             options.FallbackStrategy = CUjit_fallbackstrategy.PreferPtx;
 
-            try
-            {
-                var result = nvcuda.cuModuleLoadDataEx(ptx, options);
-                return new JitResult(this, ptx, result);
-            }
-            catch (CUjit_exception jex)
-            {
-                var result = new JitResult(this, ptx, jex.JitResult);
-                throw new JitException(result, jex);
-            }
+            var native_result = nvcuda.cuModuleLoadDataEx(ptx, options);
+            return new JitResult(this, ptx, native_result);
         }
     }
 }

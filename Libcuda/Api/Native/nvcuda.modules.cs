@@ -50,9 +50,7 @@ namespace Libcuda.Api.Native
                         result.WallTime = native_options.WallTime;
                         result.InfoLog = native_options.InfoLog;
                         result.ErrorLog = native_options.ErrorLog;
-
-                        if (error != CUresult.CUDA_SUCCESS) throw new CUjit_exception(result);
-                        else return result;
+                        return result;
                     }
                 }
                 catch (CudaException)
