@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Libcuda.Api.DataTypes;
 using XenoGears.Functional;
 
 namespace Libcuda.Api.Native.DataTypes
@@ -9,7 +10,7 @@ namespace Libcuda.Api.Native.DataTypes
     {
         public CUresult ErrorCode { get; set; }
         public CUmodule Module { get; set; }
-        public TimeSpan WallTime { get; set; }
+        public ElapsedTime WallTime { get; set; }
 
         private String _infoLog = String.Empty;
         public String InfoLog

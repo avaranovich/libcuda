@@ -15,7 +15,7 @@
 
 : Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx'
 
-JIT compilation succeeded in 00:00:00 and produced CUmodule <Handle>.
+JIT compilation succeeded in <CUelapsed_time> and produced CUmodule <Handle>.
 
 Loading entry points of CUmodule <Handle>...
 Found entry point MatMulKernel...
@@ -41,4 +41,4 @@ Grid is configured as (416, 304, 1): blockdim is (16, 16, 1), griddim is (26, 19
     +0032 Out System.Single[,]  (492864 bytes in VRAM)
     **************************************************
     0036                        (1725424 bytes in VRAM)
-Function execution succeeded in <TimeSpan> (ε = 0.5 μs).
+Function execution succeeded in <CUelapsed_time> (ε = 0.5 μs).

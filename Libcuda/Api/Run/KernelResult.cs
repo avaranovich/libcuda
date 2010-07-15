@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Libcuda.Api.Native.DataTypes;
+using Libcuda.Api.DataTypes;
 using XenoGears.Assertions;
 using System.Linq;
 using XenoGears.Functional;
@@ -13,14 +13,14 @@ namespace Libcuda.Api.Run
     public class KernelResult : IDictionary<int, Object>
     {
         private readonly KernelInvocation _invocation;
-        public CUelapsed_time WallTime { get; private set; }
+        public ElapsedTime WallTime { get; private set; }
 
         public KernelResult(KernelInvocation invocation)
         {
             _invocation = invocation;
         }
 
-        public KernelResult(KernelInvocation invocation, CUelapsed_time wallTime)
+        public KernelResult(KernelInvocation invocation, ElapsedTime wallTime)
         {
             _invocation = invocation;
             WallTime = wallTime;

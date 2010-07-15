@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Libcuda.Api.DataTypes;
 using Libcuda.Exceptions;
 using XenoGears.Exceptions;
 using XenoGears.Assertions;
@@ -23,7 +24,7 @@ namespace Libcuda.Api.Jit
         }
 
         [IncludeInMessage]
-        public TimeSpan WallTime { get { return JitResult.CompilationWallTime; } }
+        public ElapsedTime WallTime { get { return JitResult.CompilationWallTime; } }
 
         [IncludeInMessage]
         public String InfoLog { get { return JitResult.CompilationInfoLog; } }

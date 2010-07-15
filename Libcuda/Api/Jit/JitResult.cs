@@ -1,6 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
+using Libcuda.Api.DataTypes;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
@@ -14,7 +14,7 @@ namespace Libcuda.Api.Jit
         public int CompilationOptimizationLevel { get; set; }
         public int CompilationMaxRegistersPerThread { get; set; }
         public int CompilationPlannedThreadsPerBlock { get; set; }
-        public TimeSpan CompilationWallTime { get; private set; }
+        public ElapsedTime CompilationWallTime { get; private set; }
         public String CompilationInfoLog { get; private set; }
         public String CompilationErrorLog { get; private set; }
 

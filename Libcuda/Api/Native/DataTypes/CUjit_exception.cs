@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Libcuda.Api.DataTypes;
 using Libcuda.Exceptions;
 using XenoGears.Assertions;
 using XenoGears.Exceptions;
@@ -18,7 +19,7 @@ namespace Libcuda.Api.Native.DataTypes
         }
 
         [IncludeInMessage]
-        public TimeSpan WallTime { get { return JitResult.WallTime; } }
+        public ElapsedTime WallTime { get { return JitResult.WallTime; } }
 
         [IncludeInMessage]
         public String InfoLog { get { return JitResult.InfoLog; } }

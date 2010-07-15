@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Libcuda.Api.DataTypes;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 
@@ -9,7 +10,7 @@ namespace Libcuda
     public static class CudaProfiler
     {
         // note. cannot use TimeSpan here because it ain't work with fractions of milliseconds
-        public static CUelapsed_time Benchmark(Action action)
+        public static ElapsedTime Benchmark(Action action)
         {
             var before = CUevent.Null;
             var after = CUevent.Null;
