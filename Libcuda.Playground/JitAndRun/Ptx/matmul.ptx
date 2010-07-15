@@ -10,7 +10,7 @@
     .reg .u16 %rh<6>;
     .reg .u32 %r<37>;
     .reg .f32 %f<5>;
-    .reg .pred %p<5>;
+    .reg .pred %p<9>;
     .reg .u32 a_width, a_height, a_raw;
     .reg .u32 b_width, b_height, b_raw;
     .reg .u32 c_width, c_height, c_raw;
@@ -35,18 +35,12 @@
     // if (A.height <= row || B.width <= col) return;
     ld.param.s32        b_width, [B+0];
     ld.param.s32        a_height, [A+4];
-    set.le.u32.s32      %r9, a_height, row;
-    neg.s32             %r10, %r9;
-    set.le.u32.s32      %r11, b_width, col;
-    neg.s32             %r12, %r11;
-    or.b32              %r13, %r10, %r12;
-    mov.u32             %r14, 0;
-    setp.eq.s32         %p1, %r13, %r14;
-    @%p1 bra            $Init;
-    bra.uni             $End;
+    setp.le.u32         %p6, a_height, row;
+    setp.le.u32         %p7, b_width, col;
+    or.pred             %p8, %p6, %p7;
+    @%p1 bra            $End;
 
     // float Cvalue = 0;
-$Init:
     mov.f32             cvalue, 0f00000000;         // 0
 
     // for (int dim = 0; dim < A.width; ++dim)
