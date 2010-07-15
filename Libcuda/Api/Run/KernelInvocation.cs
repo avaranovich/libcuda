@@ -43,7 +43,7 @@ namespace Libcuda.Api.Run
 
                 TraceBeforeLaunch(gridDim, blockDim);
                 var wall_time = CudaProfiler.Benchmark(() => nvcuda.cuLaunchGrid(Function, gridDim));
-                Log.WriteLine("Function execution succeeded in {0}." + Environment.NewLine, wall_time);
+                Log.WriteLine("Function execution succeeded in {0} ({1} = 0.5 {2}s)." + Environment.NewLine, wall_time, Syms.Epsilon, Syms.Mu);
                 return new KernelResult(this, wall_time);
             }
             finally 
