@@ -16,6 +16,10 @@ namespace Libcuda.Playground.JitAndRun
             var gridDim = new dim3((int)Math.Ceiling(1.0 * b.Width() / blockDim.X), (int)Math.Ceiling(1.0 * a.Height() / blockDim.Y));
 
             var ptx = LoadPtxFromResources();
+            // mess with driver caching JIT results
+            // since we need to verify the entire compilation log
+            ptx = ptx.Replace("exit;", "exit; // " + Guid.NewGuid());
+
             using (var jitted = ptx.JitKernel(blockDim))
             {
                 // todo. that's an untidy way to invoke a kernel

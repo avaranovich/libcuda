@@ -7,7 +7,7 @@ namespace Libcuda.Api.Native
 {
     public static partial class nvcuda
     {
-        [WorkerThread(Name = "Libcuda worker thread", IsAffined = true)]
+        [WorkerThread(Name = "Libcuda worker thread", IsAffined = true, IsBackground = true)]
         [DebuggerNonUserCode]
         internal class LibcudaWorkerThread : WorkerThread
         {

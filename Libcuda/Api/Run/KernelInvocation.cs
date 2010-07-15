@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using Libcuda.DataTypes;
@@ -23,7 +22,7 @@ namespace Libcuda.Api.Run
         {
             Function = function;
             Args = new KernelArguments(args);
-            Args.SuppressDispose();
+            GC.SuppressFinalize(Args);
         }
 
         public KernelResult Launch(dim3 gridDim, dim3 blockDim)

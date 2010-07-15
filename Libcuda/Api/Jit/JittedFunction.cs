@@ -48,7 +48,7 @@ namespace Libcuda.Api.Jit
 
             // note. there's no necessity in unloading the function
             // it'll be unloaded together with the module
-            SuppressDispose();
+            GC.SuppressFinalize(this);
         }
 
         public KernelResult Run(dim3 gridDim, dim3 blockDim, params KernelArgument[] args)

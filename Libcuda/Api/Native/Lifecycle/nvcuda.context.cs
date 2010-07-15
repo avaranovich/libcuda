@@ -4,6 +4,7 @@ using System.Runtime.ConstrainedExecution;
 using Libcuda.Api.Devices;
 using Libcuda.Api.Native.DataTypes;
 using XenoGears.Assertions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
@@ -57,7 +58,13 @@ namespace Libcuda.Api.Native
 
             ~GlobalContext()
             {
-                Wrap(() => cuCtxDestroy(_handle));
+                // todo. okay, I've failed again
+                // the next time I start this, there are two points to investigate:
+                // 1) will cuCtxDestroy be called implicitly when the application gets shut down?
+                // 2) how do I correctly call it if it needs to be called?
+
+//                cuCtxDestroy(_handle);
+//                _worker.Dispose();
             }
         }
     }

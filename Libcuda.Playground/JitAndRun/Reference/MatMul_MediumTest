@@ -13,9 +13,14 @@
 .entry MatMulKernel {...}
 ************************************************************************************************************************
 
-: Considering profile 'compute_13' for gpu='sm_13' in 'cuModuleLoadDataEx'
+: Considering profile 'compute_13' for gpu='<HardwareIsa>' in 'cuModuleLoadDataEx'
+: Retrieving binary for 'cuModuleLoadDataEx', for gpu='<HardwareIsa>', usage mode=' --maxrregcount 64 -O4'
+: Considering profile 'compute_13' for gpu='<HardwareIsa>' in 'cuModuleLoadDataEx'
+: Control flags for 'cuModuleLoadDataEx' disable search path
+: Ptx binary found for 'cuModuleLoadDataEx', architecture='compute_13'
+: Ptx compilation for 'cuModuleLoadDataEx', for gpu='<HardwareIsa>', ocg options=' --maxrregcount 64 -O4'
 
-JIT compilation succeeded in <CUelapsed_time> and produced CUmodule <Handle>.
+JIT compilation succeeded in <ElapsedTime> and produced CUmodule <Handle>.
 
 Loading entry points of CUmodule <Handle>...
 Found entry point MatMulKernel...
@@ -41,4 +46,4 @@ Grid is configured as (32, 32, 1): blockdim is (16, 16, 1), griddim is (2, 2, 1)
     +0032 Out System.Single[,]  (1224 bytes in VRAM)
     ************************************************
     0036                        (3884 bytes in VRAM)
-Function execution succeeded in <CUelapsed_time> (ε = 0.5 μs).
+Function execution succeeded in <ElapsedTime> (ε = 0.5 μs).
