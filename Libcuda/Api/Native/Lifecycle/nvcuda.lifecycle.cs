@@ -6,9 +6,11 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
 using XenoGears.Assertions;
+using XenoGears.Threading;
 
 namespace Libcuda.Api.Native
 {
+    [DebuggerNonUserCode]
     public static partial class nvcuda
     {
         // todo. so far we use a single context to launch kernel invocations
@@ -26,42 +28,80 @@ namespace Libcuda.Api.Native
         // CUDA driver checks this anyways, but we should provide high-level checks too
         // upd. it could also be a good idea to configure logging at thread level
 
-        private static GlobalContext _ctx;
-        static nvcuda()
+        private static Object _initializationLock = new Object();
+        private static bool _hasBeenInitialized = false;
+        private static Exception _initializationException = null;
+        private class nvcudaInitializationException : Exception { public nvcudaInitializationException(Exception reason) : base(null, reason) { } }
+        private static void EnsureInitialized()
         {
-            MarshalToWorkerThread(() =>
+            if (!_hasBeenInitialized)
             {
-                Log.WriteLine("Dynamically linking to CUDA driver...");
-                var cudaVersion = CudaVersions.Cuda;
-                if (cudaVersion == 0)
+                lock (_initializationLock)
                 {
-                    Log.WriteLine("CUDA driver not found!");
-                    throw new CudaException(CudaError.NoDriver);
+                    if (!_hasBeenInitialized)
+                    {
+                        try
+                        {
+                            InitializeGlobalContext();
+                        }
+                        catch(Exception exn)
+                        {
+                            _initializationException = exn;
+                            throw new nvcudaInitializationException(exn);
+                        }
+                        finally
+                        {
+                            _hasBeenInitialized = true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (_initializationException != null)
+                {
+                    throw new nvcudaInitializationException(_initializationException);
                 }
                 else
                 {
-                    (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
-                    Log.WriteLine("Successfully linked to {0} v{1} (CUDA {2}.{3}).",
-                        CudaDriver.Name,
-                        CudaDriver.Version,
-                        (int)cudaVersion / 1000, (int)cudaVersion % 100);
-                    Log.WriteLine();
+                    return;
                 }
+            }
+        }
 
-                Log.WriteLine("Initializing CUDA driver...");
-                cuInit(CUinit_flags.None);
-                Log.WriteLine("Success.");
+        private static GlobalContext _globalContext;
+        private static void InitializeGlobalContext()
+        {
+            Log.WriteLine("Dynamically linking to CUDA driver...");
+            var cudaVersion = CudaVersions.Cuda;
+            if (cudaVersion == 0)
+            {
+                Log.WriteLine("CUDA driver not found!");
+                throw new CudaException(CudaError.NoDriver);
+            }
+            else
+            {
+                (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
+                Log.WriteLine("Successfully linked to {0} v{1} (CUDA {2}.{3}).",
+                    CudaDriver.Name,
+                    CudaDriver.Version,
+                    (int)cudaVersion / 1000, (int)cudaVersion % 100);
                 Log.WriteLine();
+            }
 
-                _ctx = new GlobalContext();
-            });
+            Log.WriteLine("Initializing CUDA driver...");
+            cuInit(CUinit_flags.None);
+            Log.WriteLine("Success.");
+            Log.WriteLine();
+
+            _globalContext = new GlobalContext();
         }
 
         [DebuggerNonUserCode]
         private class GlobalContext : CriticalFinalizerObject
         {
-            private readonly CUcontext _ctx;
-            public static implicit operator CUcontext(GlobalContext ctx) { return ctx == null ? CUcontext.Null : ctx._ctx; }
+            private readonly CUcontext _handle;
+            public static implicit operator CUcontext(GlobalContext ctx) { return ctx == null ? CUcontext.Null : ctx._handle; }
 
             public GlobalContext()
             {
@@ -76,14 +116,14 @@ namespace Libcuda.Api.Native
                 Log.WriteLine(Environment.NewLine + device);
 
                 Log.WriteLine("Creating CUDA context for device #0...");
-                _ctx = cuCtxCreate(CUctx_flags.None, device.Handle);
+                _handle = cuCtxCreate(CUctx_flags.None, device.Handle);
                 Log.WriteLine("Success.");
                 Log.WriteLine();
             }
 
             ~GlobalContext()
             {
-                MarshalToWorkerThread(() => cuCtxDestroy(_ctx));
+                Wrap(() => cuCtxDestroy(_handle));
             }
         }
     }

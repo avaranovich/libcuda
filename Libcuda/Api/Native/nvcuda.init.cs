@@ -7,7 +7,6 @@ using Libcuda.Exceptions;
 
 namespace Libcuda.Api.Native
 {
-    [DebuggerNonUserCode]
     public static partial class nvcuda
     {
         [DllImport("nvcuda", EntryPoint = "cuInit")]
@@ -17,7 +16,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void cuInit(CUinit_flags Flags)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {

@@ -16,7 +16,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUevent cuEventCreate(CUevent_flags Flags)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -47,7 +47,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventDestroy(CUevent hEvent)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventRecord(CUevent hEvent, CUstream hStream)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -111,7 +111,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuEventSynchronize(CUevent hEvent)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -140,7 +140,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static ElapsedTime cuEventElapsedTime(CUevent hStart, CUevent hEnd)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {

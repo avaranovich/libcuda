@@ -31,7 +31,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUjit_result cuModuleLoadDataEx(IntPtr image, CUjit_options options)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -332,7 +332,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuModuleUnload(CUmodule mod)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -361,7 +361,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUfunction cuModuleGetFunction(CUmodule hmod, String name)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {

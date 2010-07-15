@@ -17,6 +17,7 @@ namespace Libcuda.Api.Jit
         public int PlannedThreadsPerBlock { get; set; }
 
         // todo. cache jitted kernels
+        // this is of little priority though, since driver caches kernels as well
         public JitResult Compile(String ptx)
         {
             Log.WriteLine("Peforming JIT compilation...");

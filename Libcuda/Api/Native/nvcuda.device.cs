@@ -17,7 +17,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetCount()
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -48,7 +48,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdevice cuDeviceGet(int ordinal)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -79,7 +79,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static String cuDeviceGetName(CUdevice dev)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -110,7 +110,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static HardwareIsa cuDeviceComputeCapability(CUdevice dev)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -141,7 +141,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuDeviceGetAttribute(CUdevice_attribute attrib, CUdevice dev)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -191,7 +191,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static uint cuDeviceTotalMem(CUdevice dev)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {

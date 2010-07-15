@@ -15,7 +15,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static CUdeviceptr cuMemAlloc(uint bytesize)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -46,7 +46,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemFree(CUdeviceptr dptr)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -75,7 +75,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyHtoD(CUdeviceptr dstDevice, IntPtr srcHost, uint ByteCount)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -104,7 +104,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuMemcpyDtoH(IntPtr dstHost, CUdeviceptr srcDevice, uint ByteCount)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {

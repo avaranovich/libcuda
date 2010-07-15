@@ -8,8 +8,10 @@ namespace Libcuda.Api.Native
         private static WorkerThread _worker = new WorkerThread{Name = "Libcuda worker thread"};
         private static int _worker_nativeThreadId;
 
-        private static void MarshalToWorkerThread(Action task)
+        private static void Wrap(Action task)
         {
+            EnsureInitialized();
+
             if (NativeThread.Id == _worker_nativeThreadId)
             {
                 task();
@@ -36,8 +38,10 @@ namespace Libcuda.Api.Native
             }
         }
 
-        private static T MarshalToWorkerThread<T>(Func<T> task)
+        private static T Wrap<T>(Func<T> task)
         {
+            EnsureInitialized();
+
             if (NativeThread.Id == _worker_nativeThreadId)
             {
                 return task();

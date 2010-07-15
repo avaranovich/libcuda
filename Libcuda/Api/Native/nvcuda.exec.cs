@@ -18,7 +18,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSeti(CUfunction hfunc, int offset, uint value)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -47,7 +47,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetf(CUfunction hfunc, int offset, float value)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -76,7 +76,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetv(CUfunction hfunc, int offset, Object obj)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -117,7 +117,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuParamSetSize(CUfunction hfunc, uint numbytes)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -146,7 +146,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static int cuFuncGetAttribute(CUfunction_attribute attrib, CUfunction hfunc)
         {
-            return MarshalToWorkerThread(() =>
+            return Wrap(() =>
             {
                 try
                 {
@@ -177,7 +177,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetSharedSize(CUfunction hfunc, uint bytes)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -206,7 +206,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -235,7 +235,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
@@ -275,7 +275,7 @@ namespace Libcuda.Api.Native
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void cuLaunchGrid(CUfunction f, int grid_width, int grid_height)
         {
-            MarshalToWorkerThread(() =>
+            Wrap(() =>
             {
                 try
                 {
