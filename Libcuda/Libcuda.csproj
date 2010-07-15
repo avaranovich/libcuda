@@ -48,6 +48,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Native\Lifecycle\LibcudaWorkerThread.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.lifecycle.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.aspects.cs" />
     <Compile Include="DataTypes\Half.cs" />
