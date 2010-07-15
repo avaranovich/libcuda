@@ -1,7 +1,6 @@
 .version 1.4
 .target sm_13
 
-// __global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
 .entry MatMulKernel (
     .param .align 4 .b8 A[12],
     .param .align 4 .b8 B[12],
@@ -18,6 +17,8 @@
     .reg .u32 col;
     .reg .f32 cvalue;
     .reg .u32 dim;
+    .reg .u32 a_offset, a_offset_lo, a_offset_stride, a_offset_hi; // a_offset_stride is 4
+    .reg .u32 b_offset, b_offset_lo, b_offset_stride, b_offset_hi; // b_offset_hi ain't calculated
 
     // int row = blockIdx.y * blockDim.y + threadIdx.y;
     // int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -50,28 +51,26 @@
     @%p2 bra            $AfterLoop;
 
     // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col]
-    mov.s32             %r17, a_width;
-    mul.lo.s32          %r18, a_width, row;
-    mul.lo.u32          %r19, col, 4;
-    mul.lo.u32          %r20, b_width, 4;
-    add.s32             %r21, %r18, a_width;
-    ld.param.u32        b_raw, [B+8];
-    add.u32             %r23, b_raw, %r19;
-    mul.lo.u32          %r24, %r18, 4;
-    mul.lo.u32          %r25, %r21, 4;
     ld.param.u32        a_raw, [A+8];
-    add.u32             %r27, %r24, a_raw;
-    add.u32             %r28, %r25, a_raw;
-    mov.s32             %r29, %r17;
+    mul.lo.s32          %r18, a_width, row;
+    mul.lo.u32          a_offset_lo, %r18, 4;
+    add.u32             a_offset, a_offset_lo, a_raw;
+    add.s32             %r21, %r18, a_width;
+    mul.lo.u32          %r25, %r21, 4;
+    add.u32             a_offset_hi, %r25, a_raw;
+    ld.param.u32        b_raw, [B+8];
+    mul.lo.u32          b_offset_lo, col, 4;
+    add.u32             b_offset, b_raw, b_offset_lo;
+    mul.lo.u32          b_offset_stride, b_width, 4;
 
-    // Cvalue += A.elements[row * A.width + dim]; * B.elements[dim * B.width + col]
+    // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col]
 $LoopBody:
-    ld.global.f32       %f2, [%r27+0];
-    ld.global.f32       %f3, [%r23+0];
+    ld.global.f32       %f2, [a_offset+0];
+    ld.global.f32       %f3, [b_offset+0];
     mad.f32             cvalue, %f3, %f2, cvalue;
-    add.u32             %r27, %r27, 4;
-    add.u32             %r23, %r20, %r23;
-    setp.ne.u32         %p3, %r27, %r28;
+    add.u32             a_offset, a_offset, 4;
+    add.u32             b_offset, b_offset_stride, b_offset;
+    setp.ne.u32         %p3, a_offset, a_offset_hi;
     @%p3 bra            $LoopBody;
     bra.uni             $AfterLoop;
 

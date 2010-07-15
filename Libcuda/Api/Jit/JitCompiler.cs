@@ -28,7 +28,7 @@ namespace Libcuda.Api.Jit
             Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
             Log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
             Log.WriteLine(Environment.NewLine + "*".Repeat(120));
-            Log.WriteLine(ptx.QuoteBraces().TrimEnd());
+            Log.WriteLine(ptx.TrimEnd());
             Log.WriteLine(120.Times("*"));
             Log.WriteLine();
 
