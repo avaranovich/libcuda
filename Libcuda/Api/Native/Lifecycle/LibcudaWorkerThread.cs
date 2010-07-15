@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Libcuda.Exceptions;
 using XenoGears.Threading;
 
@@ -7,6 +8,7 @@ namespace Libcuda.Api.Native
     public static partial class nvcuda
     {
         [WorkerThread(Name = "Libcuda worker thread", IsAffined = true)]
+        [DebuggerNonUserCode]
         internal class LibcudaWorkerThread : WorkerThread
         {
             protected override void Initialize()

@@ -127,7 +127,7 @@
     <Compile Include="Api\Native\nvcuda.device.cs" />
     <Compile Include="Api\Native\nvcuda.events.cs" />
     <Compile Include="Api\Native\nvcuda.exec.cs" />
-    <Compile Include="Api\Native\nvcuda.init.cs" />
+    <Compile Include="Api\Native\Lifecycle\nvcuda.init.cs" />
     <Compile Include="Api\Native\nvcuda.mem.cs" />
     <Compile Include="Api\Native\nvcuda.modules.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
