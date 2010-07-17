@@ -72,9 +72,19 @@ namespace Libcuda.DataTypes
             return _primitives.Contains(t);
         }
 
+        public static bool IsCudaPrimitive(this Object o)
+        {
+            return o != null && o.GetType().IsCudaPrimitive();
+        }
+
         public static bool IsCudaVector(this Type t)
         {
             return _vectors.Contains(t);
+        }
+
+        public static bool IsCudaVector(this Object o)
+        {
+            return o != null && o.GetType().IsCudaVector();
         }
     }
 }
