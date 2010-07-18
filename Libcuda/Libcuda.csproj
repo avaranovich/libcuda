@@ -42,12 +42,13 @@
     <None Include="Properties\AssemblyInfo.template" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\XenoGears\XenoGears\XenoGears.csproj">
+    <ProjectReference Include="$(XENOGEARS)\XenoGears\XenoGears.csproj">
       <Project>{9435C2AB-D46A-481C-B485-BD74EFAE7D3E}</Project>
       <Name>XenoGears</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Native\Lifecycle\nvcuda.logging.cs" />
     <Compile Include="Api\Native\Lifecycle\LibcudaWorkerThread.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.context.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.aspects.cs" />
@@ -57,9 +58,7 @@
     <Compile Include="DataTypes\Vectors.S8.cs" />
     <Compile Include="DataTypes\Vectors.S16.cs" />
     <Compile Include="DataTypes\Vectors.U16.cs" />
-    <Compile Include="Tracing\Traces.Init.cs" />
     <Compile Include="Tracing\Traces.cs" />
-    <Compile Include="Tracing\Traces.Jit.cs" />
     <Compile Include="Api\Native\DataTypes\CUcontext.cs" />
     <Compile Include="Api\Native\DataTypes\CUctx_flags.cs" />
     <Compile Include="Api\DataTypes\ElapsedTime.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="Api\Native\nvcuda.contexts.cs" />
     <Compile Include="Api\Native\nvcuda.version.cs" />
     <Compile Include="Api\Run\KernelArgument.DtoH.cs" />
-    <Compile Include="Tracing\Traces.Run.cs" />
     <Compile Include="CudaDriver.cs" />
     <Compile Include="CudaProfiler.cs" />
     <Compile Include="CudaVersions.cs" />
