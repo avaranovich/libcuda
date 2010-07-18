@@ -1,6 +1,7 @@
 using System;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
+using Libcuda.Tracing;
 using Libcuda.Versions;
 using XenoGears.Functional;
 using XenoGears.Assertions;
@@ -20,17 +21,21 @@ namespace Libcuda.Api.Jit
         // this is of little priority though, since driver caches kernels as well
         public JitResult Compile(String ptx)
         {
-            Log.WriteLine("Peforming JIT compilation...");
-            Log.WriteLine("    PTX source text                              : {0}", "(see below)");
-            Log.WriteLine("    Target hardware ISA                          : {0}", TargetFromContext ? "(determined from context)" : Target.ToString());
-            Log.WriteLine("    Actual hardware ISA                          : {0}", CudaVersions.HardwareIsa);
-            Log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
-            Log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
-            Log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
-            Log.WriteLine(Environment.NewLine + "*".Repeat(120));
-            Log.WriteLine(ptx.TrimEnd());
-            Log.WriteLine(120.Times("*"));
-            Log.WriteLine();
+            var log = Traces.Jit.Info;
+            log.EnsureBlankLine();
+
+            log.WriteLine("Peforming JIT compilation...");
+            log.WriteLine("    PTX source text                              : {0}", "(see below)");
+            log.WriteLine("    Target hardware ISA                          : {0}", TargetFromContext ? "(determined from context)" : Target.ToString());
+            log.WriteLine("    Actual hardware ISA                          : {0}", CudaVersions.HardwareIsa);
+            log.WriteLine("    Max registers per thread                     : {0}", MaxRegistersPerThread);
+            log.WriteLine("    Planned threads per block                    : {0}", PlannedThreadsPerBlock);
+            log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
+
+            log.EnsureBlankLine();
+            log.WriteLine("*".Repeat(120));
+            log.WriteLine(ptx.TrimEnd());
+            log.WriteLine(120.Times("*"));
 
             var options = new CUjit_options();
             options.MaxRegistersPerThread = MaxRegistersPerThread;

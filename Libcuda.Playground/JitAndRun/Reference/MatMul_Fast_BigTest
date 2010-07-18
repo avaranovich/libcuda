@@ -19,7 +19,6 @@
 : Control flags for 'cuModuleLoadDataEx' disable search path
 : Ptx binary found for 'cuModuleLoadDataEx', architecture='compute_13'
 : Ptx compilation for 'cuModuleLoadDataEx', for gpu='<HardwareIsa>', ocg options=' --maxrregcount 64 -O4'
-
 JIT compilation succeeded in <ElapsedTime> and produced CUmodule <Handle>.
 
 Loading entry points of CUmodule <Handle>...

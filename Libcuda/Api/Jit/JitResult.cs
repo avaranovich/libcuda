@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using Libcuda.Api.DataTypes;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
+using Libcuda.Tracing;
 using Libcuda.Versions;
 using XenoGears.Functional;
 
@@ -25,13 +26,16 @@ namespace Libcuda.Api.Jit
 
         internal JitResult(JitCompiler compiler, String ptx, CUjit_result result)
         {
+            var log = Traces.Jit.Info;
+            log.EnsureBlankLine();
+
             CompilationTarget = compiler.Target;
             CompilationOptimizationLevel = compiler.OptimizationLevel;
             CompilationMaxRegistersPerThread = compiler.MaxRegistersPerThread;
             CompilationPlannedThreadsPerBlock = compiler.PlannedThreadsPerBlock;
             CompilationWallTime = result.WallTime;
             CompilationInfoLog = result.InfoLog == String.Empty ? null : result.InfoLog;
-            if (CompilationInfoLog != null) Log.WriteLine(CompilationInfoLog + Environment.NewLine);
+            if (CompilationInfoLog != null) log.WriteLine(CompilationInfoLog);
             CompilationErrorLog = result.ErrorLog == String.Empty ? null : result.ErrorLog;
 
             Ptx = ptx;
@@ -40,26 +44,26 @@ namespace Libcuda.Api.Jit
             if (ErrorCode == CudaError.Success)
             {
                 Module = new JittedModule(this, result.Module);
-                Log.WriteLine("JIT compilation succeeded in {0} and produced {1}." + Environment.NewLine, CompilationWallTime, Module);
+                log.WriteLine("JIT compilation succeeded in {0} and produced {1}." , CompilationWallTime, Module);
 
-                Log.WriteLine("Loading entry points of {0}...", Module);
+                log.EnsureBlankLine();
+                log.WriteLine("Loading entry points of {0}...", Module);
                 Module.Functions.ForEach(function =>
                 {
-                    Log.WriteLine("Found entry point {0}...", function.Name);
-                    Log.WriteLine("Successfully resolved it as {0}.", function.Handle);
-                    Log.WriteLine("    Max threads per block        : {0}", function.MaxThreadsPerBlock);
-                    Log.WriteLine("    Shared memory requirements   : {0} bytes", function.SharedSizeBytes);
-                    Log.WriteLine("    Constant memory requirements : {0} bytes", function.ConstSizeBytes);
-                    Log.WriteLine("    Local memory requirements    : {0} bytes", function.LocalSizeBytes);
-                    Log.WriteLine("    Register memory requirements : {0} registers", function.NumRegs);
-                    Log.WriteLine("    PTX version                  : {0}", function.PtxVersion);
-                    Log.WriteLine("    Binary version               : {0}", function.BinaryVersion);
+                    log.WriteLine("Found entry point {0}...", function.Name);
+                    log.WriteLine("Successfully resolved it as {0}.", function.Handle);
+                    log.WriteLine("    Max threads per block        : {0}", function.MaxThreadsPerBlock);
+                    log.WriteLine("    Shared memory requirements   : {0} bytes", function.SharedSizeBytes);
+                    log.WriteLine("    Constant memory requirements : {0} bytes", function.ConstSizeBytes);
+                    log.WriteLine("    Local memory requirements    : {0} bytes", function.LocalSizeBytes);
+                    log.WriteLine("    Register memory requirements : {0} registers", function.NumRegs);
+                    log.WriteLine("    PTX version                  : {0}", function.PtxVersion);
+                    log.WriteLine("    Binary version               : {0}", function.BinaryVersion);
                 });
-                Log.WriteLine();
             }
             else
             {
-                Log.WriteLine("JIT compilation failed in {0}." + Environment.NewLine, CompilationWallTime);
+                log.WriteLine("JIT compilation failed in {0}." + Environment.NewLine, CompilationWallTime);
                 throw new JitException(this);
             }
         }

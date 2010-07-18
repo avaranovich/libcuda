@@ -5,8 +5,10 @@ using Libcuda.DataTypes;
 using Libcuda.Api.Jit;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
+using Libcuda.Tracing;
 using XenoGears.Assertions;
 using XenoGears.Functional;
+using XenoGears.Logging;
 using XenoGears.Reflection.Simple;
 using XenoGears.Strings;
 
@@ -14,6 +16,8 @@ namespace Libcuda.Api.Run
 {
     public class KernelInvocation
     {
+        private LevelLogger Log { get { return Traces.Run.Info; } }
+
         public JittedFunction Function { get; private set; }
         public KernelArguments Args { get; private set; }
         private bool _hasCompletedExecution = false;
@@ -42,7 +46,7 @@ namespace Libcuda.Api.Run
 
                 TraceBeforeLaunch(gridDim, blockDim);
                 var wall_time = CudaProfiler.Benchmark(() => nvcuda.cuLaunchGrid(Function, gridDim));
-                Log.WriteLine("Function execution succeeded in {0} ({1} = 0.5 {2}s)." + Environment.NewLine, wall_time, Syms.Epsilon, Syms.Mu);
+                Log.WriteLine("Function execution succeeded in {0} ({1} = 0.5 {2}s).", wall_time, Syms.Epsilon, Syms.Mu);
                 return new KernelResult(this, wall_time);
             }
             finally 
@@ -53,6 +57,7 @@ namespace Libcuda.Api.Run
 
         private void TraceBeforeLaunch(dim3 gridDim, dim3 blockDim)
         {
+            Log.EnsureBlankLine();
             Log.WriteLine("Launching function {0}...", Function);
             Log.WriteLine("Grid is configured as {2}: blockdim is {0}, griddim is {1}",
                 blockDim.ToString().Slice(4),

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using XenoGears.Assertions;
-using XenoGears.Logging;
 using XenoGears.Functional;
 
 namespace Libcuda.Playground.JitAndRun
@@ -50,11 +48,13 @@ namespace Libcuda.Playground.JitAndRun
             {
                 Log.WriteLine("*".Repeat(120));
                 Log.WriteLine("ERROR! Calculated matrix ain't equal to reference result.");
-                Log.WriteLine();
 
+                Log.EnsureBlankLine();
                 PrintMatrix("Expected: ", a);
-                Log.WriteLine();
+
+                Log.EnsureBlankLine();
                 PrintMatrix("Actual: ", b);
+
                 AssertionHelper.Fail();
             }
         }

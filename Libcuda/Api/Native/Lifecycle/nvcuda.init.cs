@@ -14,6 +14,7 @@ namespace Libcuda.Api.Native
 
         private static void InitializeDriver()
         {
+            Log.EnsureBlankLine();
             Log.WriteLine("Dynamically linking to CUDA driver...");
             var cudaVersion = CudaVersions.Cuda;
             if (cudaVersion == 0)
@@ -28,9 +29,9 @@ namespace Libcuda.Api.Native
                     CudaDriver.Name,
                     CudaDriver.Version,
                     (int)cudaVersion / 1000, (int)cudaVersion % 100);
-                Log.WriteLine();
             }
 
+            Log.EnsureBlankLine();
             Log.WriteLine("Initializing CUDA driver...");
             Wrap(() =>
             {
@@ -39,7 +40,6 @@ namespace Libcuda.Api.Native
             });
 
             Log.WriteLine("Success.");
-            Log.WriteLine();
         }
     }
 }

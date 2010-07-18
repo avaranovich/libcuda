@@ -40,20 +40,24 @@ namespace Libcuda.Api.Native
 
             public GlobalContext()
             {
+                Log.EnsureBlankLine();
                 Log.WriteLine("Acquiring number of CUDA-capable devices...");
                 var deviceCount = cuDeviceGetCount();
                 Log.WriteLine("{0} device(s) found.", cuDeviceGetCount());
                 (deviceCount > 0).AssertTrue();
 
+                Log.EnsureBlankLine();
                 Log.WriteLine("Accessing device #0...");
                 var device = CudaDevice.First;
                 Log.WriteLine("Success.");
-                Log.WriteLine(Environment.NewLine + device);
 
+                Log.EnsureBlankLine();
+                Log.WriteLine(device);
+
+                Log.EnsureBlankLine();
                 Log.WriteLine("Creating CUDA context for device #0...");
                 _handle = cuCtxCreate(CUctx_flags.None, device.Handle);
                 Log.WriteLine("Success.");
-                Log.WriteLine();
             }
 
             ~GlobalContext()

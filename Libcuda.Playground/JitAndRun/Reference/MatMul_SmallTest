@@ -20,7 +20,6 @@
 : Ptx binary found for 'cuModuleLoadDataEx', architecture='compute_13'
 : Ptx compilation for 'cuModuleLoadDataEx', for gpu='<HardwareIsa>', ocg options=' --maxrregcount 256 -O4'
 ptxas warning : Too big maxrregcount value specified 256, will be ignored
-
 JIT compilation succeeded in <ElapsedTime> and produced CUmodule <Handle>.
 
 Loading entry points of CUmodule <Handle>...
