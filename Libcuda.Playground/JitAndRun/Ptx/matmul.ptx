@@ -34,8 +34,8 @@
     add.u32             row, %r5, %r2;
 
     // if (A.height <= row || B.width <= col) return;
-    ld.param.s32        b_width, [B+0];
-    ld.param.s32        a_height, [A+4];
+    ld.param.u32        b_width, [B+0];
+    ld.param.u32        a_height, [A+4];
     setp.le.u32         %p6, a_height, row;
     setp.le.u32         %p7, b_width, col;
     or.pred             %p1, %p6, %p7;
@@ -45,17 +45,17 @@
     mov.f32             cvalue, 0f00000000;         // 0
 
     // for (int dim = 0; dim < A.width; ++dim)
-    ld.param.s32        a_width, [A+0];
+    ld.param.u32        a_width, [A+0];
     mov.u32             dim, 0;
-    setp.le.s32         %p2, a_width, dim;
+    setp.le.u32         %p2, a_width, dim;
     @%p2 bra            $AfterLoop;
 
     // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col]
     ld.param.u32        a_raw, [A+8];
-    mul.lo.s32          %r18, a_width, row;
+    mul.lo.u32          %r18, a_width, row;
     mul.lo.u32          a_offset_lo, %r18, 4;
     add.u32             a_offset, a_offset_lo, a_raw;
-    add.s32             %r21, %r18, a_width;
+    add.u32             %r21, %r18, a_width;
     mul.lo.u32          %r25, %r21, 4;
     add.u32             a_offset_hi, %r25, a_raw;
     ld.param.u32        b_raw, [B+8];
@@ -77,9 +77,9 @@ $LoopBody:
     // C.elements[row * C.width + col] = Cvalue;
 $AfterLoop:
     ld.param.u32        c_raw, [C+8];
-    ld.param.s32        c_width, [C+0];
-    mul.lo.s32          %r32, c_width, row;
-    add.s32             %r33, col, %r32;
+    ld.param.u32        c_width, [C+0];
+    mul.lo.u32          %r32, c_width, row;
+    add.u32             %r33, col, %r32;
     mul.lo.u32          %r34, %r33, 4;
     add.u32             %r35, c_raw, %r34;
     st.global.f32       [%r35+0], cvalue;
