@@ -39,7 +39,7 @@
     setp.le.u32         %p6, a_height, row;
     setp.le.u32         %p7, b_width, col;
     or.pred             %p1, %p6, %p7;
-    @%p1 bra            $End;
+    @%p1 bra            $Exit;
 
     // float Cvalue = 0;
     mov.f32             cvalue, 0f00000000;         // 0
@@ -50,7 +50,7 @@
     setp.le.u32         %p2, a_width, dim;
     @%p2 bra            $AfterLoop;
 
-    // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col]
+    // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col];
     ld.param.u32        a_raw, [A+8];
     mul.lo.u32          %r18, a_width, row;
     mul.lo.u32          a_offset_lo, %r18, 4;
@@ -60,16 +60,16 @@
     add.u32             a_offset_hi, %r25, a_raw;
     ld.param.u32        b_raw, [B+8];
     mul.lo.u32          b_offset_lo, col, 4;
-    add.u32             b_offset, b_raw, b_offset_lo;
+    add.u32             b_offset, b_offset_lo, b_raw;
     mul.lo.u32          b_offset_stride, b_width, 4;
 
-    // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col]
+    // Cvalue += A.elements[row * A.width + dim] * B.elements[dim * B.width + col];
 $LoopBody:
     ld.global.f32       %f2, [a_offset+0];
     ld.global.f32       %f3, [b_offset+0];
     mad.f32             cvalue, %f3, %f2, cvalue;
     add.u32             a_offset, a_offset, 4;
-    add.u32             b_offset, b_offset_stride, b_offset;
+    add.u32             b_offset, b_offset, b_offset_stride;
     setp.ne.u32         %p3, a_offset, a_offset_hi;
     @%p3 bra            $LoopBody;
     bra.uni             $AfterLoop;
@@ -84,6 +84,6 @@ $AfterLoop:
     add.u32             %r35, c_raw, %r34;
     st.global.f32       [%r35+0], cvalue;
 
-$End:
+$Exit:
     exit;
 }
