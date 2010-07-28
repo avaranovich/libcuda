@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace Libcuda.DataTypes
 {
+    // todo. implement implicit/explicit casts, arithmetic operations, mirror math apis
+    // for some starter see OpenCL spec, section 6.4 "Vector Operations"
+
     [DebuggerNonUserCode]
     [StructLayout(LayoutKind.Sequential)]
     public struct double1 : IEnumerable<double>, IEquatable<double1>
