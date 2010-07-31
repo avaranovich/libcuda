@@ -6,8 +6,8 @@ namespace Libcuda.Tracing
     [DebuggerNonUserCode]
     public static class Traces
     {
-        internal readonly static Logger Init = Logger.Get("Libcuda.Init");
-        internal readonly static Logger Jit = Logger.Get("Libcuda.Jit");
-        internal readonly static Logger Run = Logger.Get("Libcuda.Run");
+        public readonly static Logger Init = Logger.Get("Libcuda.Init");
+        public readonly static Logger Jit = Logger.Get("Libcuda.Jit");
+        public readonly static Logger Run = Logger.Get("Libcuda.Run");
     }
 }
