@@ -48,6 +48,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Jit\JitTuning.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.logging.cs" />
     <Compile Include="Api\Native\Lifecycle\LibcudaWorkerThread.cs" />
     <Compile Include="Api\Native\Lifecycle\nvcuda.context.cs" />

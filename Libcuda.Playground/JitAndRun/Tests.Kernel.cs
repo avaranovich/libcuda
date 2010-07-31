@@ -20,7 +20,7 @@ namespace Libcuda.Playground.JitAndRun
             // since we need to verify the entire compilation log
             ptx = ptx.Replace("exit;", "exit; // " + Guid.NewGuid());
 
-            using (var jitted = ptx.JitKernel(blockDim))
+            using (var jitted = ptx.JitKernel())
             {
                 // todo. that's an untidy way to invoke a kernel
                 // since it doesn't dispose of invocation parameters

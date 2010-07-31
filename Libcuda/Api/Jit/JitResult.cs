@@ -13,8 +13,7 @@ namespace Libcuda.Api.Jit
     {
         public HardwareIsa CompilationTarget { get; set; }
         public int CompilationOptimizationLevel { get; set; }
-        public int CompilationMaxRegistersPerThread { get; set; }
-        public int CompilationPlannedThreadsPerBlock { get; set; }
+        public JitTuning CompilationTuning { get; set; }
         public ElapsedTime CompilationWallTime { get; private set; }
         public String CompilationInfoLog { get; private set; }
         public String CompilationErrorLog { get; private set; }
@@ -31,8 +30,7 @@ namespace Libcuda.Api.Jit
 
             CompilationTarget = compiler.Target;
             CompilationOptimizationLevel = compiler.OptimizationLevel;
-            CompilationMaxRegistersPerThread = compiler.MaxRegistersPerThread;
-            CompilationPlannedThreadsPerBlock = compiler.PlannedThreadsPerBlock;
+            CompilationTuning = compiler.Tuning;
             CompilationWallTime = result.WallTime;
             CompilationInfoLog = result.InfoLog == String.Empty ? null : result.InfoLog;
             if (CompilationInfoLog != null) log.WriteLine(CompilationInfoLog);
