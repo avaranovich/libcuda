@@ -58,7 +58,7 @@ namespace Libcuda.Api.Jit
                 {
                     var name = m["name"];
                     var s_directives = m["directives"].Split(".".MkArray(), StringSplitOptions.None).Trim().Where(s => s.IsNotEmpty()).ToReadOnly();
-                    var directives = s_directives.Select(s => s.Parse(@"$(?<name>\w+)\s+(?<value>.*?)^")).ToDictionary(m1 => m1["name"].Trim(), m1 => m1["value"].Trim()).ToReadOnly();
+                    var directives = s_directives.Select(s => s.Parse(@"^(?<name>\w+)\s+(?<value>.*?)$")).ToDictionary(m1 => m1["name"].Trim(), m1 => m1["value"].Trim()).ToReadOnly();
                     if (directives.IsNotEmpty())
                     {
                         Func<String, dim3> parse_dim3 = s =>
