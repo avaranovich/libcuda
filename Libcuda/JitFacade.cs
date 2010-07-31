@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Libcuda.Api.Jit;
+using Libcuda.DataTypes;
 using Libcuda.Versions;
 
 namespace Libcuda
@@ -8,9 +9,10 @@ namespace Libcuda
     [DebuggerNonUserCode]
     public static class JitFacade
     {
-        public static JittedKernel JitKernel(this String ptx)
+        public static JittedKernel JitKernel(this String ptx, dim3 reqntid)
         {
-            return ptx.JitKernel(null);
+            var tuning = new JitTuning { Reqntid = reqntid };
+            return ptx.JitKernel(tuning);
         }
 
         public static JittedKernel JitKernel(this String ptx, JitTuning tuning)
@@ -23,9 +25,10 @@ namespace Libcuda
             return new JittedKernel(result);
         }
 
-        public static JittedKernel JitKernel(this String ptx, HardwareIsa target)
+        public static JittedKernel JitKernel(this String ptx, dim3 reqntid, HardwareIsa target)
         {
-            return ptx.JitKernel(null, target);
+            var tuning = new JitTuning { Reqntid = reqntid };
+            return ptx.JitKernel(tuning, target);
         }
 
         public static JittedKernel JitKernel(this String ptx, JitTuning tuning, HardwareIsa target)

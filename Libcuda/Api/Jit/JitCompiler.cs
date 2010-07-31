@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Libcuda.Api.Native;
@@ -10,6 +9,7 @@ using Libcuda.Versions;
 using XenoGears.Functional;
 using XenoGears.Assertions;
 using XenoGears.Strings;
+using XenoGears.Traits.Dumpable;
 
 namespace Libcuda.Api.Jit
 {
@@ -39,35 +39,16 @@ namespace Libcuda.Api.Jit
             log.WriteLine("    PTX source text                              : {0}", "(see below)");
             log.WriteLine("    Target hardware ISA                          : {0}", TargetFromContext ? "(determined from context)" : Target.ToString());
             log.WriteLine("    Actual hardware ISA                          : {0}", CudaVersions.HardwareIsa);
+            log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
 
             // here we attempt to rewrite PTX by injecting performance tuning directives directly into source codes
-            if (Maxnreg != 0 || Maxntid != new dim3() || Reqntid != new dim3() || Minnctapersm != 0 || Maxnctapersm != 0)
+            if (Tuning.IsNotTrivial)
             {
-                (Maxnreg >= 0).AssertTrue();
-                (Maxntid.X >= 1 && Maxntid.Y >= 1 && Maxntid.Z >= 1).AssertTrue();
-                (Reqntid.X >= 1 && Reqntid.Y >= 1 && Reqntid.Z >= 1).AssertTrue();
-                (Minnctapersm >= 0).AssertTrue();
-                (Maxnctapersm >= 0).AssertTrue();
+                Tuning.Validate();
 
                 log.EnsureBlankLine();
                 log.WriteLine("Detected non-trivial performance tuning parameters...");
-                log.WriteLine("    Max registers per thread                     : {0}", Maxnreg);
-                log.WriteLine("    Max threads in thread block                  : {0} x {1} x {2}", Maxntid.X, Maxntid.Y, Maxntid.Z);
-                log.WriteLine("    Required threads in thread block             : {0} x {1} x {2}", Reqntid.X, Reqntid.Y, Reqntid.Z);
-                log.WriteLine("    Min thread blocks per SM                     : {0}", Minnctapersm);
-                log.WriteLine("    Max thread blocks per SM                     : {0}", Maxnctapersm);
-                log.WriteLine("    Optimization level (0 - 4, higher is better) : {0}", OptimizationLevel);
-
-                Func<int, dim3, dim3, int, int, String> render = (maxnreg, maxntid, reqntid, minnctapersm, maxnctapersm) =>
-                {
-                    var directives = new List<String>();
-                    if (maxnreg != 0) directives.Add(String.Format(".maxnreg {0}", maxnreg));
-                    if (maxntid != new dim3()) directives.Add(String.Format(".maxntid {0}, {1}, {2}", maxntid.X, maxntid.Y, maxntid.Z));
-                    if (reqntid != new dim3()) directives.Add(String.Format(".reqntid {0}, {1}, {2}", reqntid.X, reqntid.Y, reqntid.Z));
-                    if (minnctapersm != 0) directives.Add(String.Format(".minnctapersm {0}", minnctapersm));
-                    if (maxnctapersm != 0) directives.Add(String.Format(".maxnctapersm {0}", maxnctapersm));
-                    return directives.StringJoin(Environment.NewLine);
-                };
+                Tuning.DumpAsText(log.Writer.Medium);
 
                 log.EnsureBlankLine();
                 log.WriteLine("To apply them it is necessary to perform PTX rewriting and inject corresponding directives directly into source codes.");
@@ -76,7 +57,8 @@ namespace Libcuda.Api.Jit
                 ptx = ptx.Replace(rx_entry, RegexOptions.Singleline, m =>
                 {
                     var name = m["name"];
-                    var directives = m["directives"].Split('.').Trim().Select(s => s.Parse(@"$(?<name>\w+)\s+(?<value>.*?)^")).ToDictionary(m1 => m1["name"].Trim(), m1 => m1["value"].Trim()).ToReadOnly();
+                    var s_directives = m["directives"].Split(".".MkArray(), StringSplitOptions.None).Trim().Where(s => s.IsNotEmpty()).ToReadOnly();
+                    var directives = s_directives.Select(s => s.Parse(@"$(?<name>\w+)\s+(?<value>.*?)^")).ToDictionary(m1 => m1["name"].Trim(), m1 => m1["value"].Trim()).ToReadOnly();
                     if (directives.IsNotEmpty())
                     {
                         Func<String, dim3> parse_dim3 = s =>
@@ -89,68 +71,113 @@ namespace Libcuda.Api.Jit
                         log.WriteLine("Found entry \"{0}\" tuned as follows: {1}.", name, directives.Select(kvp => String.Format("{0} = {1}", kvp.Key, kvp.Value)).StringJoin(", "));
 
                         var maxnreg = int.Parse(directives.GetOrDefault("maxnreg", "0"));
-                        if (Maxnreg != 0 && Maxnreg > maxnreg)
+                        if (Maxnreg != 0)
                         {
-                            log.WriteLine("Conflict! New max threads in thread block ({0}) is incompatible with original value ({1}).", Maxnreg, maxnreg);
-                            throw AssertionHelper.Fail();
-                        }
-                        else
-                        {
-                            maxnreg = Maxnreg;
-                        }
-
-                        var maxntid = parse_dim3(directives.GetOrDefault("maxntid", "1, 1, 1"));
-                        if (Maxntid != new dim3() && Maxntid > maxntid)
-                        {
-                            log.WriteLine("Conflict! New max threads in thread block ({0}, {1}, {2}) is incompatible with original value ({3}, {4}, {5}).", Maxntid.X, Maxntid.Y, Maxntid.Z, maxntid.X, maxntid.Y, maxntid.Z);
-                            throw AssertionHelper.Fail();
-                        }
-                        else
-                        {
-                            maxntid = Maxntid;
+                            if (maxnreg != 0 && !(Maxnreg <= maxnreg))
+                            {
+                                log.WriteLine("Conflict! New max registers per thread ({0}) is incompatible with original value ({1}).", Maxnreg, maxnreg);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                maxnreg = Maxnreg;
+                            }
                         }
 
-                        var reqntid = parse_dim3(directives.GetOrDefault("reqntid", "1, 1, 1"));
-                        if (Reqntid != new dim3() && Reqntid != reqntid)
+                        var maxntid = parse_dim3(directives.GetOrDefault("maxntid", "0, 0, 0"));
+                        if (Maxntid != new dim3())
                         {
-                            log.WriteLine("Conflict! New required threads in thread block ({0}, {1}, {2}) is incompatible with original value ({3}, {4}, {5}).", Reqntid.X, Reqntid.Y, Reqntid.Z, reqntid.X, reqntid.Y, reqntid.Z);
-                            throw AssertionHelper.Fail();
+                            if (maxntid != new dim3() && !(Maxntid <= maxntid))
+                            {
+                                log.WriteLine("Conflict! New max threads in thread block ({0}, {1}, {2}) is incompatible with original value ({3}, {4}, {5}).", Maxntid.X, Maxntid.Y, Maxntid.Z, maxntid.X, maxntid.Y, maxntid.Z);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                maxntid = Maxntid;
+                            }
                         }
-                        else
+
+                        var reqntid = parse_dim3(directives.GetOrDefault("reqntid", "0, 0, 0"));
+                        if (Reqntid != new dim3())
                         {
-                            reqntid = Reqntid;
+                            if (reqntid != new dim3() && Reqntid != reqntid)
+                            {
+                                log.WriteLine("Conflict! New required threads in thread block ({0}, {1}, {2}) is incompatible with original value ({3}, {4}, {5}).", Reqntid.X, Reqntid.Y, Reqntid.Z, reqntid.X, reqntid.Y, reqntid.Z);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                reqntid = Reqntid;
+                            }
+                        }
+
+                        if (maxntid != new dim3() && reqntid != new dim3())
+                        {
+                            if (!(reqntid <= maxntid))
+                            {
+                                log.WriteLine("Conflict! Required threads in thread block ({0}, {1}, {2}) is incompatible with max threads in thread block ({3}, {4}, {5}).", reqntid.X, reqntid.Y, reqntid.Z, maxntid.X, maxntid.Y, maxntid.Z);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                maxntid = new dim3(0, 0, 0);
+                            }
                         }
 
                         var minnctapersm = int.Parse(directives.GetOrDefault("minnctapersm", "0"));
-                        if (Minnctapersm != 0 && Minnctapersm < minnctapersm)
+                        if (Minnctapersm != 0)
                         {
-                            log.WriteLine("Conflict! New min thread blocks per SM ({0}) is incompatible with original value ({1}).", Minnctapersm, minnctapersm);
-                            throw AssertionHelper.Fail();
-                        }
-                        else
-                        {
-                            minnctapersm = Minnctapersm;
+                            if (Minnctapersm < minnctapersm)
+                            {
+                                log.WriteLine("Conflict! New min thread blocks per SM ({0}) is incompatible with original value ({1}).", Minnctapersm, minnctapersm);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                minnctapersm = Minnctapersm;
+                            }
                         }
 
                         var maxnctapersm = int.Parse(directives.GetOrDefault("maxnctapersm", "0"));
-                        if (Maxnctapersm != 0 && Maxnctapersm > maxnctapersm)
+                        if (Maxnctapersm != 0) 
                         {
-                            log.WriteLine("Conflict! New max thread blocks per SM ({0}) is incompatible with original value ({1}).", Maxnctapersm, maxnctapersm);
-                            throw AssertionHelper.Fail();
-                        }
-                        else
-                        {
-                            maxnctapersm = Maxnctapersm;
+                            if (Maxnctapersm > maxnctapersm)
+                            {
+                                log.WriteLine("Conflict! New max thread blocks per SM ({0}) is incompatible with original value ({1}).", Maxnctapersm, maxnctapersm);
+                                throw AssertionHelper.Fail();
+                            }
+                            else
+                            {
+                                maxnctapersm = Maxnctapersm;
+                            }
                         }
 
-                        var replacement = m["header"] + Environment.NewLine + render(maxnreg, maxntid, reqntid, minnctapersm, maxnctapersm) + Environment.NewLine + "{";
+                        if (minnctapersm != 0 && maxnctapersm != 0)
+                        {
+                            if (minnctapersm > maxnctapersm)
+                            {
+                                log.WriteLine("Conflict! Min thread blocks per SM ({0}) and max thread blocks per SM ({1}) are incompatible.", minnctapersm, maxnctapersm);
+                                throw AssertionHelper.Fail();
+                            }
+                        }
+
+                        log.Write("Applying compilation parameters... ");
+                        var tuning = new JitTuning{Maxnreg = maxnreg, Maxntid = maxntid, Reqntid = reqntid, Minnctapersm = minnctapersm, Maxnctapersm = maxnctapersm};
+                        tuning.Validate();
+                        var replacement = m["header"] + Environment.NewLine + tuning.RenderPtx() + Environment.NewLine + "{";
+
+                        log.WriteLine("Success.");
                         return replacement;
                     }
                     else
                     {
                         log.WriteLine("Found entry \"{0}\" without performance tuning directives.", name);
-                        log.Write("Applying compilation parameters... Success.");
-                        var replacement = m["header"] + Environment.NewLine + render(Maxnreg, Maxntid, Reqntid, Minnctapersm, Maxnctapersm) + Environment.NewLine + "{";
+
+                        log.Write("Applying compilation parameters... ");
+                        var replacement = m["header"] + Environment.NewLine + Tuning.RenderPtx() + Environment.NewLine + "{";
+
+                        log.WriteLine("Success.");
                         return replacement;
                     }
                 });
@@ -163,6 +190,7 @@ namespace Libcuda.Api.Jit
 
             var options = new CUjit_options();
             options.OptimizationLevel = OptimizationLevel;
+            options.PlannedThreadsPerBlock = Reqntid.Product();
             // todo. an attempt to pass the Target value directly leads to CUDA_ERROR_INVALID_VALUE
             // as of now, this feature is not really important, so I'm marking it as TBI
             options.TargetFromContext = TargetFromContext.AssertTrue();

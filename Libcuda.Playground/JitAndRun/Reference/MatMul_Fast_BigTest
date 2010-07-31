@@ -2,12 +2,23 @@
     PTX source text                              : (see below)
     Target hardware ISA                          : (determined from context)
     Actual hardware ISA                          : SM_13
-    Max registers per thread                     : 0
-    Planned threads per block                    : 256
     Optimization level (0 - 4, higher is better) : 4
 
+Detected non-trivial performance tuning parameters...
+Performance tuning parameters:
+    Max registers per thread                     : 0
+    Max threads in thread block                  : 0 x 0 x 0
+    Required threads in thread block             : 16 x 16 x 1
+    Min thread blocks per SM                     : 0
+    Max thread blocks per SM                     : 0
+
+To apply them it is necessary to perform PTX rewriting and inject corresponding directives directly into source codes.
+Analyzing entries in PTX module...
+Found entry "MatMulKernel_Fast" without performance tuning directives.
+Applying compilation parameters... Success.
+
 ************************************************************************************************************************
-.version 1.4
+.version 2.1
 .target sm_13
 
 .entry MatMulKernel_Fast {...}

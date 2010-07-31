@@ -1,4 +1,4 @@
-.version 1.4
+.version 2.1
 .target sm_13
 
 .entry MatMulKernel_Fast (
