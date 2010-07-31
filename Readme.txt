@@ -1,4 +1,4 @@
-Provides a managed interface to certain functionality of nvcuda driver.
+Provides managed interface to certain functionality of nvcuda driver.
 
 Implemented functionality:
  * Versioning of driver, software and hardware ISAs.
@@ -14,4 +14,3 @@ Quick facts:
  * Libcuda is strictly single-threaded: the thread that first accesses its functionality becomes its owner, other threads aren't permitted to use the library at all.
  * The latter restriction isn't imposed by CUDA itself - it might be lifted in future versions of the library.
  * Debug builds of Libcuda trace a lot - if you don't like that, logging can be dampen down or completely shut up by configuring the library.
- 
