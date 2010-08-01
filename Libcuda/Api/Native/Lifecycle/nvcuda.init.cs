@@ -3,6 +3,7 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.Exceptions;
 using Libcuda.Versions;
 using XenoGears.Assertions;
+using XenoGears.Versioning;
 
 namespace Libcuda.Api.Native
 {
@@ -26,8 +27,8 @@ namespace Libcuda.Api.Native
             {
                 (cudaVersion >= CudaVersion.CUDA_31).AssertTrue();
                 Log.WriteLine("Successfully linked to {0} v{1} (CUDA {2}.{3}).",
-                    CudaDriver.Name,
-                    CudaDriver.Version,
+                    CudaDriver.Current.Name,
+                    CudaDriver.Current.Version(),
                     (int)cudaVersion / 1000, (int)cudaVersion % 100);
             }
 

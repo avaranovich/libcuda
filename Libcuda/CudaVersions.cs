@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 using Libcuda.Api.Native;
-using Libcuda.Exceptions;
 using Libcuda.Versions;
 using XenoGears.Assertions;
+using XenoGears.Versioning;
 
 namespace Libcuda
 {
@@ -14,7 +14,8 @@ namespace Libcuda
         {
             get
             {
-                return CudaDriver.Version;
+                CudaDriver.Ensure();
+                return CudaDriver.Current.Version();
             }
         }
 
@@ -22,8 +23,7 @@ namespace Libcuda
         {
             get
             {
-                try { return (CudaVersion)nvcuda.cuDriverGetVersion(); }
-                catch (CudaException) { return 0; }
+                return (CudaVersion)nvcuda.cuDriverGetVersion();
             }
         }
 
@@ -31,34 +31,28 @@ namespace Libcuda
         {
             get
             {
-                if (Driver == null)
+                switch (Cuda)
                 {
-                    return 0;
-                }
-                else
-                {
-                    var r = (Driver.Build % 10) * 100 + Driver.Revision / 100;
-                    switch (Cuda)
-                    {
-                        case CudaVersion.CUDA_10:
-                            return SoftwareIsa.PTX_10;
-                        case CudaVersion.CUDA_11:
-                            return SoftwareIsa.PTX_11;
-                        case CudaVersion.CUDA_20:
-                            return SoftwareIsa.PTX_12;
-                        case CudaVersion.CUDA_21:
-                            return SoftwareIsa.PTX_13;
-                        case CudaVersion.CUDA_22:
-                            return SoftwareIsa.PTX_14;
-                        case CudaVersion.CUDA_23:
-                            return r >= 190 ? SoftwareIsa.PTX_15 : SoftwareIsa.PTX_14;
-                        case CudaVersion.CUDA_30:
-                            return SoftwareIsa.PTX_20;
-                        case CudaVersion.CUDA_31:
-                            return SoftwareIsa.PTX_21;
-                        default:
-                            throw AssertionHelper.Fail();
-                    }
+                    case CudaVersion.CUDA_10:
+                        return SoftwareIsa.PTX_10;
+                    case CudaVersion.CUDA_11:
+                        return SoftwareIsa.PTX_11;
+                    case CudaVersion.CUDA_20:
+                        return SoftwareIsa.PTX_12;
+                    case CudaVersion.CUDA_21:
+                        return SoftwareIsa.PTX_13;
+                    case CudaVersion.CUDA_22:
+                        return SoftwareIsa.PTX_14;
+                    case CudaVersion.CUDA_23:
+                        (Driver != null).AssertTrue();
+                        var r = (Driver.Build % 10) * 100 + Driver.Revision / 100;
+                        return r >= 190 ? SoftwareIsa.PTX_15 : SoftwareIsa.PTX_14;
+                    case CudaVersion.CUDA_30:
+                        return SoftwareIsa.PTX_20;
+                    case CudaVersion.CUDA_31:
+                        return SoftwareIsa.PTX_21;
+                    default:
+                        throw AssertionHelper.Fail();
                 }
             }
         }
@@ -67,8 +61,9 @@ namespace Libcuda
         {
             get
             {
-                var device = CudaDevices.Current;
-                return device == null ? 0 : device.Caps.ComputeCaps;
+                CudaDriver.Ensure();
+                var device = CudaDevices.Current.AssertNotNull();
+                return device.Caps.ComputeCaps;
             }
         }
     }
