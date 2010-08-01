@@ -15,12 +15,12 @@ namespace Libcuda.Api.Run
         private readonly KernelInvocation _invocation;
         public ElapsedTime WallTime { get; private set; }
 
-        public KernelResult(KernelInvocation invocation)
+        internal KernelResult(KernelInvocation invocation)
         {
             _invocation = invocation;
         }
 
-        public KernelResult(KernelInvocation invocation, ElapsedTime wallTime)
+        internal KernelResult(KernelInvocation invocation, ElapsedTime wallTime)
         {
             _invocation = invocation;
             WallTime = wallTime;

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using Libcuda.Api.Run;
@@ -35,6 +34,7 @@ namespace Libcuda.Api.Jit
 
         public JittedFunction(CUfunction handle, String name)
         {
+            CudaDriver.Ensure();
             Handle = handle.AssertThat(h => h.IsNotNull);
             Name = name ?? "N/A";
 

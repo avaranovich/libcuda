@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using Libcuda.Api.Native;
+using Libcuda.Exceptions;
 using XenoGears.Reflection.Attributes;
 using XenoGears.Reflection.Shortcuts;
 
@@ -38,6 +39,11 @@ namespace Libcuda
                 var fvi = FileVersionInfo.GetVersionInfo(FileInfo.FullName);
                 return new Version(fvi.FileMajorPart, fvi.FileMinorPart, fvi.FileBuildPart, fvi.FilePrivatePart);
             }
+        }
+
+        public static void Ensure()
+        {
+            nvcuda.Ensure();
         }
     }
 }

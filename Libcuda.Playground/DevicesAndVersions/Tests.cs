@@ -14,6 +14,8 @@ namespace Libcuda.Playground.DevicesAndVersions
         [Test, Category("Hot")]
         public void Gtx260()
         {
+            CudaDriver.Ensure();
+
             (CudaVersions.Driver == new Version("6.14.12.5721")).AssertTrue();
             (CudaVersions.Cuda == CudaVersion.CUDA_31).AssertTrue();
             (CudaVersions.SoftwareIsa == SoftwareIsa.PTX_21).AssertTrue();

@@ -24,6 +24,7 @@ namespace Libcuda.Api.Run
             _type = value == null ? null : value.GetType();
             _value = value.AssertNotNull();
 
+            CudaDriver.Ensure();
             CopyHtoD();
         }
 

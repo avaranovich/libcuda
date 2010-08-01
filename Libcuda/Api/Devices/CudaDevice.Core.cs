@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Libcuda.Api.Native;
 using Libcuda.Api.Native.DataTypes;
 using System.Linq;
+using XenoGears.Assertions;
 using XenoGears.Functional;
 using XenoGears.Strings;
 using XenoGears.Traits.Dumpable;
@@ -31,6 +32,8 @@ namespace Libcuda.Api.Devices
 
         public CudaDevice(int index)
         {
+            CudaDriver.Ensure();
+
             Index = index;
             Handle = nvcuda.cuDeviceGet(index);
 

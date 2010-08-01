@@ -5,6 +5,7 @@ namespace Libcuda.Api.Native
     public static partial class nvcuda
     {
         private static LibcudaWorkerThread _worker = new LibcudaWorkerThread();
+        internal static void Ensure() { _worker.Ensure(); }
 
         private static void Wrap(Action task)
         {

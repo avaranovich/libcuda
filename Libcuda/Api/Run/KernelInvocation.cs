@@ -22,15 +22,22 @@ namespace Libcuda.Api.Run
         public KernelArguments Args { get; private set; }
         private bool _hasCompletedExecution = false;
 
+        public KernelInvocation(JittedFunction function, params KernelArgument[] args)
+            : this(function, (IEnumerable<KernelArgument>)args)
+        {
+        }
+
         public KernelInvocation(JittedFunction function, IEnumerable<KernelArgument> args)
         {
-            Function = function;
+            CudaDriver.Ensure();
+            Function = function.AssertNotNull();
             Args = new KernelArguments(args);
             GC.SuppressFinalize(Args);
         }
 
         public KernelResult Launch(dim3 gridDim, dim3 blockDim)
         {
+            CudaDriver.Ensure();
             Args.AssertNone(p => p.IsDisposed);
             _hasCompletedExecution.AssertFalse();
 

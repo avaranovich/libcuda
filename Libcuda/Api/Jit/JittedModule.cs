@@ -30,6 +30,7 @@ namespace Libcuda.Api.Jit
 
         public JittedModule(String ptx, CUmodule handle)
         {
+            CudaDriver.Ensure();
             Ptx = ptx.AssertNotNull();
             Handle = handle.AssertThat(h => h.IsNotNull);
 

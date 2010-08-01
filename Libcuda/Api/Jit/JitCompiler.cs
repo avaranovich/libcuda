@@ -30,11 +30,14 @@ namespace Libcuda.Api.Jit
 
         // todo. cache jitted kernels
         // this is of little priority though, since driver caches kernels as well
+        public JitCompiler() { CudaDriver.Ensure(); }
         public JitResult Compile(String ptx)
         {
+            ptx.AssertNotNull();
+            CudaDriver.Ensure();
+
             var log = Traces.Jit.Info;
             log.EnsureBlankLine();
-
             log.WriteLine("Peforming JIT compilation...");
             log.WriteLine("    PTX source text                              : {0}", "(see below)");
             log.WriteLine("    Target hardware ISA                          : {0}", TargetFromContext ? "(determined from context)" : Target.ToString());
