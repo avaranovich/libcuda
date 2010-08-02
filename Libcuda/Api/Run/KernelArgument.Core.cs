@@ -7,6 +7,7 @@ using XenoGears.Unsafe;
 
 namespace Libcuda.Api.Run
 {
+    [Finalizable]
     public partial class KernelArgument : Disposable
     {
         public ParameterDirection Direction { get; private set; }

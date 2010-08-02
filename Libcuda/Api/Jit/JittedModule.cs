@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Libcuda.Api.Native;
@@ -11,7 +10,7 @@ using XenoGears.Assertions;
 
 namespace Libcuda.Api.Jit
 {
-    [DebuggerNonUserCode]
+    [Finalizable]
     public class JittedModule : Disposable
     {
         public JitResult JitResult { get; private set; }

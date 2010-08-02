@@ -6,12 +6,11 @@ using Libcuda.Api.Run;
 using Libcuda.DataTypes;
 using Libcuda.Versions;
 using XenoGears.Assertions;
-using XenoGears.Traits.Disposable;
 using XenoGears.Functional;
 
 namespace Libcuda.Api.Jit
 {
-    public class JittedFunction : Disposable
+    public class JittedFunction
     {
         public String Name { get; private set; }
         public CUfunction Handle { get; private set; }
@@ -45,10 +44,6 @@ namespace Libcuda.Api.Jit
             NumRegs = nvcuda.cuFuncGetAttribute(CUfunction_attribute.NumRegs, this);
             PtxVersion = (HardwareIsa)nvcuda.cuFuncGetAttribute(CUfunction_attribute.PtxVersion, this);
             BinaryVersion = (HardwareIsa)nvcuda.cuFuncGetAttribute(CUfunction_attribute.BinaryVersion, this);
-
-            // note. there's no necessity in unloading the function
-            // it'll be unloaded together with the module
-            GC.SuppressFinalize(this);
         }
 
         public KernelResult Run(dim3 gridDim, dim3 blockDim, params KernelArgument[] args)

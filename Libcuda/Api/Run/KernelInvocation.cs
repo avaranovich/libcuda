@@ -32,7 +32,6 @@ namespace Libcuda.Api.Run
             CudaDriver.Ensure();
             Function = function.AssertNotNull();
             Args = new KernelArguments(args);
-            GC.SuppressFinalize(Args);
         }
 
         public KernelResult Launch(dim3 gridDim, dim3 blockDim)

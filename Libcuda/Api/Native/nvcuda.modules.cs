@@ -70,6 +70,7 @@ namespace Libcuda.Api.Native
 
         #region Murky details of converting CUjit_options into the format expected by nativeModuleLoadDataEx
 
+        [Finalizable]
         [DebuggerNonUserCode]
         private class nativeModuleLoadDataExOptions : Disposable
         {
