@@ -9,8 +9,7 @@ if "%CUDA_BIN_PATH%"=="" (
 ) else (
     echo Using CUDA toolkit at %CUDA_BIN_PATH%
     
-    set toolkit_is_64bit=%CUDA_BIN_PATH:~-2%
-    if "%toolkit_is_64bit%"=="64" (
+    if "%CUDA_BIN_PATH:~-2%"=="64" (
         if not "%1"=="64" (
             echo [Fatal error] Bitness of the CUDA toolkit (64^) doesn't match bitness of the compilation (%1^). You must install 32-bit version of CUDA toolkit to proceed.
             @pause
