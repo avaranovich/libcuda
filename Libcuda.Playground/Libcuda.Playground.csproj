@@ -114,7 +114,7 @@
     <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DevicesAndVersions\Reference\Gtx260" />
+    <EmbeddedResource Include="DevicesAndVersions\Reference\Win7x64_Cuda31_Gtx260" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="JitAndRun\Reference\MatMul_MediumTest" />

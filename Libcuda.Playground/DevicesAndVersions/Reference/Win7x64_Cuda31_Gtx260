@@ -5,7 +5,7 @@
     Registers (per multiprocessor)     : 16384 x 32 bits
     Shared memory (per multiprocessor) : 16384 bytes
     Constant memory (device-wide)      : 65536 bytes
-    Global memory (device-wide)        : 939196416 bytes
+    Global memory (device-wide)        : 922091520 bytes
     Max pitch                          : 2147483647 bytes
     Texture alignment                  : 256 bytes
     Max texture 1d (W)                 : 8192
