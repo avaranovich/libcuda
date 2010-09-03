@@ -18,4 +18,6 @@ glob:*.cu.cpp
 glob:*.fatbin.c
 glob:*.cubin
 glob:*.hash
+glob:*.sdf
+glob:*.opensdf
 glob:Libcuda.ncb

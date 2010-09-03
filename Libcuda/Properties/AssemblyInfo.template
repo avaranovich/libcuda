@@ -12,10 +12,10 @@ using XenoGears.Versioning;
 [assembly: AssemblyCopyright("Copyright © 2010 xeno.by")]
 
 [assembly: ComVisible(false)]
-[assembly: InternalsVisibleTo("Libcuda.Playground")]
+[assembly: InternalsVisibleTo("Libcuda.Playground, PublicKey=0024000004800000940000000602000000240000525341310004000001000100bb9da8bb71cf609c692efeb8aa64f2eae5b846b711f4fdbd0c30dcc1ea800f7718a0b8891241275781d076be62be744aa99723c48a9828176242fdcc4be3f97d849a5cb91ff79ce50c8a3deb7696eb30ae857889f163e547bc3db22850973b08ecfa20d6e219e2bdc45faa40142aa020d7514a6c3064f32a242832d31620a4e1")]
 
 [assembly: Guid("DE888EF0-78FA-4CB2-88C8-0180A3D7F523")]
-[assembly: AssemblyVersion("3.1.*")]
+[assembly: AssemblyVersion("3.1.0.0")]
 [assembly: AssemblyBuiltFrom(Repository = "$"CODEBASE"$", Revision = "$REVISION$", CodebaseHash = "$CODEHASH$")]
 [assembly: AssemblyBuiltAt(Timestamp = "$TIMESTAMP$")]
 [assembly: AssemblyBuiltBy(UserHash = "$USERHASH$")]
