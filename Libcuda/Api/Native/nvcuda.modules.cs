@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -6,6 +7,7 @@ using System.Runtime.InteropServices;
 using Libcuda.Api.DataTypes;
 using XenoGears.Assertions;
 using XenoGears.Collections.Dictionaries;
+using XenoGears.Collections.Lists;
 using XenoGears.Functional;
 using XenoGears.Traits.Disposable;
 using Libcuda.Api.Native.DataTypes;
@@ -73,6 +75,25 @@ namespace Libcuda.Api.Native
         [DebuggerNonUserCode]
         private class nativeModuleLoadDataExOptions : Disposable
         {
+            private partial class Option { public CUjit_option Key; public Object Value; public int Size; }
+            private IEnumerable<Option> GatherOptions()
+            {
+                // can't pass 0 since it'll cause CUresult.ErrorInvalidValue
+//                if (MaxRegistersPerThread != 0) yield return new Option(CUjit_option.MaxRegisters, MaxRegistersPerThread);
+//                yield return new Option(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock);
+//                yield return new Option(CUjit_option.WallTime, default(float));
+                yield return new Option(CUjit_option.InfoLogBuffer, _infoLogBuffer);
+                yield return new Option(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes, IntPtr.Size);
+                yield return new Option(CUjit_option.ErrorLogBuffer, _errorLogBuffer);
+                yield return new Option(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes, IntPtr.Size);
+//                yield return new Option(CUjit_option.OptimizationLevel, OptimizationLevel);
+//                if (TargetFromContext) yield return new Option(CUjit_option.TargetFromContext, 1);
+//                if (!TargetFromContext) yield return new Option(CUjit_option.Target, (int)Target);
+//                yield return new Option(CUjit_option.FallbackStrategy, (int)FallbackStrategy);
+            }
+
+            #region Input/output parameters
+
             // input parameters
 
             public int MaxRegistersPerThread { get; set; }
@@ -154,32 +175,15 @@ namespace Libcuda.Api.Native
                 }
             }
 
+            #endregion
+
+            #region Manual assembly of native data structure
+
             private OrderedDictionary<CUjit_option, IntPtr> _raw;
             private OrderedDictionary<CUjit_option, IntPtr> Raw { get { EnsureRaw(); return _raw; } }
             public uint Count { get { return (uint)Raw.Count; } }
             public CUjit_option[] Keys { get { return Raw.Select(t => t.Key).ToArray(); } }
             public IntPtr Values { get { EnsureRaw(); return _optionValues; } }
-
-            private OrderedDictionary<CUjit_option, Object> GatherOptions()
-            {
-                AllocateTemporaryBuffers();
-                var options = new OrderedDictionary<CUjit_option, Object>();
-
-                // can't pass 0 since it'll cause CUresult.ErrorInvalidValue
-                if (MaxRegistersPerThread != 0) options.Add(CUjit_option.MaxRegisters, MaxRegistersPerThread);
-                options.Add(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock);
-                options.Add(CUjit_option.WallTime, default(float));
-//                options.Add(CUjit_option.InfoLogBuffer, _infoLogBuffer);
-                options.Add(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes);
-//                options.Add(CUjit_option.ErrorLogBuffer, _errorLogBuffer);
-                options.Add(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes);
-                options.Add(CUjit_option.OptimizationLevel, OptimizationLevel);
-                if (TargetFromContext) options.Add(CUjit_option.TargetFromContext, 1);
-                if (!TargetFromContext) options.Add(CUjit_option.Target, (int)Target);
-                options.Add(CUjit_option.FallbackStrategy, (int)FallbackStrategy);
-
-                return options;
-            }
 
             unsafe private void EnsureRaw()
             {
@@ -192,15 +196,33 @@ namespace Libcuda.Api.Native
                     var offset = 0;
                     options.ForEach(kvp =>
                     {
+                        var value = kvp.Value;
                         var ptr = (IntPtr)(&((byte*)_optionValues)[offset]);
-                        Marshal.StructureToPtr(kvp.Value, ptr, false);
+                        Marshal.StructureToPtr(value, ptr, false);
                         _raw.Add(kvp.Key, ptr);
-                        offset += Marshal.SizeOf(kvp.Value);
+                        offset += (kvp.Size == 0 ? Marshal.SizeOf(value) : kvp.Size);
                     });
                 }
             }
 
-            #region Very ugly allocation/deallocation code
+            private partial class Option
+            {
+                public Option(CUjit_option key, Object value)
+                    : this(key, value, Marshal.SizeOf(value))
+                {
+                }
+
+                public Option(CUjit_option key, Object value, int size)
+                {
+                    Key = key;
+                    Value = value;
+                    Size = size;
+                }
+            }
+
+            #endregion
+
+            #region Allocation/deallocation of temporary buffers
 
             private bool _is_allocated = false;
             private int _infoLogBufferSizeBytes = 10000 * sizeof(byte);
