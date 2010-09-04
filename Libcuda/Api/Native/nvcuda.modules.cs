@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using Libcuda.Api.DataTypes;
 using XenoGears.Assertions;
 using XenoGears.Collections.Dictionaries;
-using XenoGears.Collections.Lists;
 using XenoGears.Functional;
 using XenoGears.Traits.Disposable;
 using Libcuda.Api.Native.DataTypes;
@@ -75,21 +74,26 @@ namespace Libcuda.Api.Native
         [DebuggerNonUserCode]
         private class nativeModuleLoadDataExOptions : Disposable
         {
-            private partial class Option { public CUjit_option Key; public Object Value; public int Size; }
-            private IEnumerable<Option> GatherOptions()
+            // note. mwahaha, there's a nice peculiarity of cuModuleLoadDataEx for 64-bit systems
+            // despite that the official documentation states that it expects "unsigned ints" as CUjit_options
+            // we actually need to pass unsigned LONGS, otherwise we can say hello to access violations
+            // http://developer.download.nvidia.com/compute/cuda/3_1/toolkit/docs/online/group__CUMODULE_gbfbf77eb2a307af8aa81376ecc909bd3.html
+
+            private partial class Field { public CUjit_option Key; public Object Value; public int Size; }
+            private IEnumerable<Field> BuildFields()
             {
                 // can't pass 0 since it'll cause CUresult.ErrorInvalidValue
-//                if (MaxRegistersPerThread != 0) yield return new Option(CUjit_option.MaxRegisters, MaxRegistersPerThread);
-//                yield return new Option(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock);
-//                yield return new Option(CUjit_option.WallTime, default(float));
-                yield return new Option(CUjit_option.InfoLogBuffer, _infoLogBuffer);
-                yield return new Option(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes, IntPtr.Size);
-                yield return new Option(CUjit_option.ErrorLogBuffer, _errorLogBuffer);
-                yield return new Option(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes, IntPtr.Size);
-//                yield return new Option(CUjit_option.OptimizationLevel, OptimizationLevel);
-//                if (TargetFromContext) yield return new Option(CUjit_option.TargetFromContext, 1);
-//                if (!TargetFromContext) yield return new Option(CUjit_option.Target, (int)Target);
-//                yield return new Option(CUjit_option.FallbackStrategy, (int)FallbackStrategy);
+                if (MaxRegistersPerThread != 0) yield return new Field(CUjit_option.MaxRegisters, MaxRegistersPerThread, IntPtr.Size);
+                yield return new Field(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock, IntPtr.Size);
+                yield return new Field(CUjit_option.WallTime, default(float), IntPtr.Size);
+                yield return new Field(CUjit_option.InfoLogBuffer, _infoLogBuffer, IntPtr.Size);
+                yield return new Field(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes, IntPtr.Size);
+                yield return new Field(CUjit_option.ErrorLogBuffer, _errorLogBuffer, IntPtr.Size);
+                yield return new Field(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes, IntPtr.Size);
+                yield return new Field(CUjit_option.OptimizationLevel, OptimizationLevel, IntPtr.Size);
+                if (TargetFromContext) yield return new Field(CUjit_option.TargetFromContext, 1, IntPtr.Size);
+                if (!TargetFromContext) yield return new Field(CUjit_option.Target, (int)Target, IntPtr.Size);
+                yield return new Field(CUjit_option.FallbackStrategy, (int)FallbackStrategy, IntPtr.Size);
             }
 
             #region Input/output parameters
@@ -120,10 +124,10 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (Raw != null).AssertTrue();
+                    (Fields != null).AssertTrue();
 
-                    if (!Raw.ContainsKey(CUjit_option.ThreadsPerBlock)) return 0;
-                    var ptr = Raw[CUjit_option.ThreadsPerBlock];
+                    if (!Fields.ContainsKey(CUjit_option.ThreadsPerBlock)) return 0;
+                    var ptr = Fields[CUjit_option.ThreadsPerBlock];
                     return *((int*)ptr);
                 }
             }
@@ -133,10 +137,10 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (Raw != null).AssertTrue();
+                    (Fields != null).AssertTrue();
 
-                    if (!Raw.ContainsKey(CUjit_option.WallTime)) return null;
-                    var ptr = Raw[CUjit_option.WallTime];
+                    if (!Fields.ContainsKey(CUjit_option.WallTime)) return null;
+                    var ptr = Fields[CUjit_option.WallTime];
                     var bits = *((int*)ptr);
 
                     var bytes = BitConverter.GetBytes(bits);
@@ -150,11 +154,11 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (Raw != null).AssertTrue(); ;
+                    (Fields != null).AssertTrue(); ;
 
-                    if (!Raw.ContainsKey(CUjit_option.InfoLogBufferSizeBytes)) return null;
-                    if (!Raw.ContainsKey(CUjit_option.InfoLogBuffer)) return null;
-                    var ptr = Raw[CUjit_option.InfoLogBufferSizeBytes];
+                    if (!Fields.ContainsKey(CUjit_option.InfoLogBufferSizeBytes)) return null;
+                    if (!Fields.ContainsKey(CUjit_option.InfoLogBuffer)) return null;
+                    var ptr = Fields[CUjit_option.InfoLogBufferSizeBytes];
                     var byteCount = *((int*)ptr);
                     return Marshal.PtrToStringAnsi(_infoLogBuffer, byteCount);
                 }
@@ -165,11 +169,11 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (Raw != null).AssertTrue(); ;
+                    (Fields != null).AssertTrue(); ;
 
-                    if (!Raw.ContainsKey(CUjit_option.ErrorLogBufferSizeBytes)) return null;
-                    if (!Raw.ContainsKey(CUjit_option.ErrorLogBuffer)) return null;
-                    var ptr = Raw[CUjit_option.ErrorLogBufferSizeBytes];
+                    if (!Fields.ContainsKey(CUjit_option.ErrorLogBufferSizeBytes)) return null;
+                    if (!Fields.ContainsKey(CUjit_option.ErrorLogBuffer)) return null;
+                    var ptr = Fields[CUjit_option.ErrorLogBufferSizeBytes];
                     var byteCount = *((int*)ptr);
                     return Marshal.PtrToStringAnsi(_errorLogBuffer, byteCount);
                 }
@@ -179,19 +183,19 @@ namespace Libcuda.Api.Native
 
             #region Manual assembly of native data structure
 
-            private OrderedDictionary<CUjit_option, IntPtr> _raw;
-            private OrderedDictionary<CUjit_option, IntPtr> Raw { get { EnsureRaw(); return _raw; } }
-            public uint Count { get { return (uint)Raw.Count; } }
-            public CUjit_option[] Keys { get { return Raw.Select(t => t.Key).ToArray(); } }
+            private OrderedDictionary<CUjit_option, IntPtr> _fields;
+            private OrderedDictionary<CUjit_option, IntPtr> Fields { get { EnsureRaw(); return _fields; } }
+            public uint Count { get { return (uint)Fields.Count; } }
+            public CUjit_option[] Keys { get { return Fields.Select(t => t.Key).ToArray(); } }
             public IntPtr Values { get { EnsureRaw(); return _optionValues; } }
 
             unsafe private void EnsureRaw()
             {
-                if (_raw == null)
+                if (_fields == null)
                 {
                     AllocateTemporaryBuffers();
-                    var options = GatherOptions();
-                    _raw = new OrderedDictionary<CUjit_option, IntPtr>();
+                    var options = BuildFields();
+                    _fields = new OrderedDictionary<CUjit_option, IntPtr>();
 
                     var offset = 0;
                     options.ForEach(kvp =>
@@ -199,20 +203,21 @@ namespace Libcuda.Api.Native
                         var value = kvp.Value;
                         var ptr = (IntPtr)(&((byte*)_optionValues)[offset]);
                         Marshal.StructureToPtr(value, ptr, false);
-                        _raw.Add(kvp.Key, ptr);
+                        _fields.Add(kvp.Key, ptr);
                         offset += (kvp.Size == 0 ? Marshal.SizeOf(value) : kvp.Size);
                     });
                 }
             }
 
-            private partial class Option
+            [DebuggerNonUserCode]
+            private partial class Field
             {
-                public Option(CUjit_option key, Object value)
+                public Field(CUjit_option key, Object value)
                     : this(key, value, Marshal.SizeOf(value))
                 {
                 }
 
-                public Option(CUjit_option key, Object value, int size)
+                public Field(CUjit_option key, Object value, int size)
                 {
                     Key = key;
                     Value = value;
