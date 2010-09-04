@@ -132,6 +132,7 @@ namespace Libcuda.Api.Native
                     (Raw != null).AssertTrue(); ;
 
                     if (!Raw.ContainsKey(CUjit_option.InfoLogBufferSizeBytes)) return null;
+                    if (!Raw.ContainsKey(CUjit_option.InfoLogBuffer)) return null;
                     var ptr = Raw[CUjit_option.InfoLogBufferSizeBytes];
                     var byteCount = *((int*)ptr);
                     return Marshal.PtrToStringAnsi(_infoLogBuffer, byteCount);
@@ -146,6 +147,7 @@ namespace Libcuda.Api.Native
                     (Raw != null).AssertTrue(); ;
 
                     if (!Raw.ContainsKey(CUjit_option.ErrorLogBufferSizeBytes)) return null;
+                    if (!Raw.ContainsKey(CUjit_option.ErrorLogBuffer)) return null;
                     var ptr = Raw[CUjit_option.ErrorLogBufferSizeBytes];
                     var byteCount = *((int*)ptr);
                     return Marshal.PtrToStringAnsi(_errorLogBuffer, byteCount);
@@ -168,9 +170,9 @@ namespace Libcuda.Api.Native
                 options.Add(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock);
                 options.Add(CUjit_option.WallTime, default(float));
 //                options.Add(CUjit_option.InfoLogBuffer, _infoLogBuffer);
-//                options.Add(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes);
+                options.Add(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes);
 //                options.Add(CUjit_option.ErrorLogBuffer, _errorLogBuffer);
-//                options.Add(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes);
+                options.Add(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes);
                 options.Add(CUjit_option.OptimizationLevel, OptimizationLevel);
                 if (TargetFromContext) options.Add(CUjit_option.TargetFromContext, 1);
                 if (!TargetFromContext) options.Add(CUjit_option.Target, (int)Target);
