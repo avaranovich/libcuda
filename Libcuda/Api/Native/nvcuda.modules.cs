@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Libcuda.Api.DataTypes;
 using XenoGears.Assertions;
+using XenoGears.Collections.Dictionaries;
 using XenoGears.Functional;
 using XenoGears.Traits.Disposable;
 using Libcuda.Api.Native.DataTypes;
@@ -100,11 +99,11 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (_allocated_threadsPerBlock != IntPtr.Zero).AssertTrue();
+                    (Raw != null).AssertTrue();
 
-                    var indexOfThreadsPerBlock = Raw.IndexOf(t => t.Item1 == CUjit_option.ThreadsPerBlock);
-                    (indexOfThreadsPerBlock != -1).AssertTrue();
-                    return (int)((IntPtr*)_allocated_arrayOfOptionValues)[indexOfThreadsPerBlock];
+                    if (!Raw.ContainsKey(CUjit_option.ThreadsPerBlock)) return 0;
+                    var ptr = Raw[CUjit_option.ThreadsPerBlock];
+                    return *((int*)ptr);
                 }
             }
 
@@ -113,14 +112,14 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (_allocated_arrayOfOptionValues != IntPtr.Zero).AssertTrue();
+                    (Raw != null).AssertTrue();
 
-                    var indexOfWallTime = Raw.IndexOf(t => t.Item1 == CUjit_option.WallTime);
-                    (indexOfWallTime != -1).AssertTrue();
-                    var raw = (int)((IntPtr*)_allocated_arrayOfOptionValues)[indexOfWallTime];
+                    if (!Raw.ContainsKey(CUjit_option.WallTime)) return null;
+                    var ptr = Raw[CUjit_option.WallTime];
+                    var bits = *((int*)ptr);
 
-                    var rawBytes = BitConverter.GetBytes(raw);
-                    var wallTime = BitConverter.ToSingle(rawBytes, 0);
+                    var bytes = BitConverter.GetBytes(bits);
+                    var wallTime = BitConverter.ToSingle(bytes, 0);
                     return new ElapsedTime(wallTime);
                 }
             }
@@ -130,14 +129,12 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (_allocated_infoLogBuffer != IntPtr.Zero).AssertTrue();
-                    (_allocated_arrayOfOptionValues != IntPtr.Zero).AssertTrue();
+                    (Raw != null).AssertTrue(); ;
 
-                    var indexOfInfoLogBufferSizeBytes = Raw.IndexOf(t => t.Item1 == CUjit_option.InfoLogBufferSizeBytes);
-                    (indexOfInfoLogBufferSizeBytes != -1).AssertTrue();
-                    var byteCount = (int)((IntPtr*)_allocated_arrayOfOptionValues)[indexOfInfoLogBufferSizeBytes];
-
-                    return Marshal.PtrToStringAnsi(_allocated_infoLogBuffer, byteCount);
+                    if (!Raw.ContainsKey(CUjit_option.InfoLogBufferSizeBytes)) return null;
+                    var ptr = Raw[CUjit_option.InfoLogBufferSizeBytes];
+                    var byteCount = *((int*)ptr);
+                    return Marshal.PtrToStringAnsi(_infoLogBuffer, byteCount);
                 }
             }
 
@@ -146,83 +143,75 @@ namespace Libcuda.Api.Native
                 get
                 {
                     IsDisposed.AssertFalse();
-                    (_allocated_errorLogBuffer != IntPtr.Zero).AssertTrue();
-                    (_allocated_arrayOfOptionValues != IntPtr.Zero).AssertTrue();
+                    (Raw != null).AssertTrue(); ;
 
-                    var indexOfErrorLogBufferSizeBytes = Raw.IndexOf(t => t.Item1 == CUjit_option.ErrorLogBufferSizeBytes);
-                    (indexOfErrorLogBufferSizeBytes != -1).AssertTrue();
-                    var byteCount = (int)((IntPtr*)_allocated_arrayOfOptionValues)[indexOfErrorLogBufferSizeBytes];
-
-                    return Marshal.PtrToStringAnsi(_allocated_errorLogBuffer, byteCount);
+                    if (!Raw.ContainsKey(CUjit_option.ErrorLogBufferSizeBytes)) return null;
+                    var ptr = Raw[CUjit_option.ErrorLogBufferSizeBytes];
+                    var byteCount = *((int*)ptr);
+                    return Marshal.PtrToStringAnsi(_errorLogBuffer, byteCount);
                 }
             }
 
+            private OrderedDictionary<CUjit_option, IntPtr> _raw;
+            private OrderedDictionary<CUjit_option, IntPtr> Raw { get { EnsureRaw(); return _raw; } }
             public uint Count { get { return (uint)Raw.Count; } }
-            public CUjit_option[] Keys { get { return Raw.Select(t => t.Item1).ToArray(); } }
-            public IntPtr Values { get { EnsureRaw(); return _allocated_arrayOfOptionValues; } }
+            public CUjit_option[] Keys { get { return Raw.Select(t => t.Key).ToArray(); } }
+            public IntPtr Values { get { EnsureRaw(); return _optionValues; } }
 
-            private ReadOnlyCollection<Tuple<CUjit_option, IntPtr>> _raw;
-            private ReadOnlyCollection<Tuple<CUjit_option, IntPtr>> Raw { get { EnsureRaw(); return _raw; } }
-            private void EnsureRaw()
+            private OrderedDictionary<CUjit_option, Object> GatherOptions()
+            {
+                AllocateTemporaryBuffers();
+                var options = new OrderedDictionary<CUjit_option, Object>();
+
+                // can't pass 0 since it'll cause CUresult.ErrorInvalidValue
+                if (MaxRegistersPerThread != 0) options.Add(CUjit_option.MaxRegisters, MaxRegistersPerThread);
+                options.Add(CUjit_option.ThreadsPerBlock, PlannedThreadsPerBlock);
+                options.Add(CUjit_option.WallTime, default(float));
+//                options.Add(CUjit_option.InfoLogBuffer, _infoLogBuffer);
+//                options.Add(CUjit_option.InfoLogBufferSizeBytes, _infoLogBufferSizeBytes);
+//                options.Add(CUjit_option.ErrorLogBuffer, _errorLogBuffer);
+//                options.Add(CUjit_option.ErrorLogBufferSizeBytes, _errorLogBufferSizeBytes);
+                options.Add(CUjit_option.OptimizationLevel, OptimizationLevel);
+                if (TargetFromContext) options.Add(CUjit_option.TargetFromContext, 1);
+                if (!TargetFromContext) options.Add(CUjit_option.Target, (int)Target);
+                options.Add(CUjit_option.FallbackStrategy, (int)FallbackStrategy);
+
+                return options;
+            }
+
+            unsafe private void EnsureRaw()
             {
                 if (_raw == null)
                 {
-                    LowLevelAllocate();
-                    _raw = GatherOptions().ToReadOnly();
+                    AllocateTemporaryBuffers();
+                    var options = GatherOptions();
+                    _raw = new OrderedDictionary<CUjit_option, IntPtr>();
 
-                    var optionValues = _raw.Select(t => t.Item2).ToArray();
-                    _allocated_arrayOfOptionValues = Marshal.AllocHGlobal(IntPtr.Size * optionValues.Count());
-                    Marshal.Copy(optionValues, 0, _allocated_arrayOfOptionValues, optionValues.Count());
+                    var offset = 0;
+                    options.ForEach(kvp =>
+                    {
+                        var ptr = (IntPtr)(&((byte*)_optionValues)[offset]);
+                        Marshal.StructureToPtr(kvp.Value, ptr, false);
+                        _raw.Add(kvp.Key, ptr);
+                        offset += Marshal.SizeOf(kvp.Value);
+                    });
                 }
-            }
-
-            private IEnumerable<Tuple<CUjit_option, IntPtr>> GatherOptions()
-            {
-                // can't pass 0 since it'll cause CUresult.ErrorInvalidValue
-                if (MaxRegistersPerThread != 0) yield return Tuple.New(CUjit_option.MaxRegisters, _star_allocated_maxRegistersPerThread);
-                yield return Tuple.New(CUjit_option.ThreadsPerBlock, _star_allocated_threadsPerBlock);
-                yield return Tuple.New(CUjit_option.WallTime, _star_allocated_wallTime);
-                yield return Tuple.New(CUjit_option.InfoLogBuffer, _allocated_infoLogBuffer);
-                yield return Tuple.New(CUjit_option.InfoLogBufferSizeBytes, _star_allocated_infoLogBufferSizeBytes);
-                yield return Tuple.New(CUjit_option.ErrorLogBuffer, _allocated_errorLogBuffer);
-                yield return Tuple.New(CUjit_option.ErrorLogBufferSizeBytes, _star_allocated_errorLogBufferSizeBytes);
-                yield return Tuple.New(CUjit_option.OptimizationLevel, _star_allocated_optimizationLevel);
-                if (TargetFromContext) yield return Tuple.New(CUjit_option.TargetFromContext, _star_allocated_targetFromContext);
-                if (!TargetFromContext) yield return Tuple.New(CUjit_option.Target, _star_allocated_target);
-                yield return Tuple.New(CUjit_option.FallbackStrategy, _star_allocated_fallbackStrategy);
             }
 
             #region Very ugly allocation/deallocation code
 
-            private const int maxCharsInLogBuffer = 1000;
-            private const int maxCharsInErrorBuffer = 1000;
-
             private bool _is_allocated = false;
+            private int _infoLogBufferSizeBytes = 10000 * sizeof(byte);
+            private IntPtr _infoLogBuffer;
+            private int _errorLogBufferSizeBytes = 10000 * sizeof(byte);
+            private IntPtr _errorLogBuffer;
+            private int _optionValuesSizeBytes = 10000 * sizeof(byte);
+            private IntPtr _optionValues;
 
-            private IntPtr _allocated_maxRegistersPerThread;
-            private unsafe IntPtr _star_allocated_maxRegistersPerThread { get { return *((IntPtr*)(void*)_allocated_maxRegistersPerThread); } }
-            private IntPtr _allocated_threadsPerBlock;
-            private unsafe IntPtr _star_allocated_threadsPerBlock { get { return *((IntPtr*)(void*)_allocated_threadsPerBlock); } }
-            private IntPtr _allocated_wallTime;
-            private unsafe IntPtr _star_allocated_wallTime { get { return *((IntPtr*)(void*)_allocated_wallTime); } }
-            private IntPtr _allocated_infoLogBuffer;
-            private IntPtr _allocated_infoLogBufferSizeBytes;
-            private unsafe IntPtr _star_allocated_infoLogBufferSizeBytes { get { return *((IntPtr*)(void*)_allocated_infoLogBufferSizeBytes); } }
-            private IntPtr _allocated_errorLogBuffer;
-            private IntPtr _allocated_errorLogBufferSizeBytes;
-            private unsafe IntPtr _star_allocated_errorLogBufferSizeBytes { get { return *((IntPtr*)(void*)_allocated_errorLogBufferSizeBytes); } }
-            private IntPtr _allocated_optimizationLevel;
-            private unsafe IntPtr _star_allocated_optimizationLevel { get { return *((IntPtr*)(void*)_allocated_optimizationLevel); } }
-            private IntPtr _allocated_targetFromContext;
-            private unsafe IntPtr _star_allocated_targetFromContext { get { return _allocated_targetFromContext == IntPtr.Zero ? IntPtr.Zero : *((IntPtr*)(void*)_allocated_targetFromContext); } }
-            private IntPtr _allocated_target;
-            private unsafe IntPtr _star_allocated_target { get { return _allocated_target == IntPtr.Zero ? IntPtr.Zero : *((IntPtr*)(void*)_allocated_target); } }
-            private IntPtr _allocated_fallbackStrategy;
-            private unsafe IntPtr _star_allocated_fallbackStrategy { get { return *((IntPtr*)(void*)_allocated_fallbackStrategy); } }
-            private IntPtr _allocated_arrayOfOptionValues;
-            private unsafe IntPtr _star_allocated_arrayOfOptionValues { get { return *((IntPtr*)(void*)_allocated_arrayOfOptionValues); } }
+            [DllImport("kernel32.dll", SetLastError = true)]
+            private static extern void ZeroMemory(IntPtr handle, uint length);
 
-            private void LowLevelAllocate()
+            private void AllocateTemporaryBuffers()
             {
                 if (!_is_allocated)
                 {
@@ -231,51 +220,23 @@ namespace Libcuda.Api.Native
                     // I'm cba to embrace the code in a number of try-finallies
                     // so I leave this bugg here
 
-                    _allocated_maxRegistersPerThread = Marshal.AllocHGlobal(Marshal.SizeOf(MaxRegistersPerThread));
-                    Marshal.WriteInt32(_allocated_maxRegistersPerThread, MaxRegistersPerThread);
-
-                    _allocated_threadsPerBlock = Marshal.AllocHGlobal(Marshal.SizeOf(PlannedThreadsPerBlock));
-                    Marshal.WriteInt32(_allocated_threadsPerBlock, PlannedThreadsPerBlock);
-
-                    _allocated_wallTime = Marshal.AllocHGlobal(sizeof(float));
-
-                    var sizeofInfoLogBuffer = maxCharsInLogBuffer * sizeof(byte);
-                    _allocated_infoLogBuffer = Marshal.AllocHGlobal(sizeofInfoLogBuffer);
-                    ZeroMemory(_allocated_infoLogBuffer, (uint)sizeofInfoLogBuffer);
+                    _infoLogBuffer = Marshal.AllocHGlobal(_infoLogBufferSizeBytes);
+                    ZeroMemory(_infoLogBuffer, (uint)_infoLogBufferSizeBytes);
                     Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
-                    _allocated_infoLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-                    Marshal.WriteIntPtr(_allocated_infoLogBufferSizeBytes, (IntPtr)sizeofInfoLogBuffer);
 
-                    var sizeofErrorLogBuffer = maxCharsInErrorBuffer * sizeof(byte);
-                    _allocated_errorLogBuffer = Marshal.AllocHGlobal(sizeofErrorLogBuffer);
-                    ZeroMemory(_allocated_errorLogBuffer, (uint)sizeofErrorLogBuffer);
+                    _errorLogBuffer = Marshal.AllocHGlobal(_errorLogBufferSizeBytes);
+                    ZeroMemory(_errorLogBuffer, (uint)_errorLogBufferSizeBytes);
                     Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
-                    _allocated_errorLogBufferSizeBytes = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(IntPtr)));
-                    Marshal.WriteIntPtr(_allocated_errorLogBufferSizeBytes, (IntPtr)sizeofErrorLogBuffer);
 
-                    _allocated_optimizationLevel = Marshal.AllocHGlobal(Marshal.SizeOf(OptimizationLevel));
-                    Marshal.WriteInt32(_allocated_optimizationLevel, OptimizationLevel);
-
-                    if (TargetFromContext)
-                    {
-                        _allocated_targetFromContext = Marshal.AllocHGlobal(sizeof(uint));
-                        Marshal.WriteInt32(_allocated_targetFromContext, 1);
-                    }
-                    else
-                    {
-                        _allocated_target = Marshal.AllocHGlobal(sizeof(uint));
-                        Marshal.WriteInt32(_allocated_target, (int)Target);
-                    }
-
-                    _allocated_fallbackStrategy = Marshal.AllocHGlobal(sizeof(uint));
-                    Marshal.WriteInt32(_allocated_fallbackStrategy, (int)CUjit_fallbackstrategy.PreferPtx);
+                    // todo. calculating exact amount of memory to reserve is cumbersome
+                    // here we just allocate enough memory to hold all the parameters
+                    _optionValues = Marshal.AllocHGlobal(_optionValuesSizeBytes);
+                    ZeroMemory(_optionValues, (uint)_optionValuesSizeBytes);
+                    Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
 
                     _is_allocated = true;
                 }
             }
-
-            [DllImport("kernel32.dll", SetLastError = true)]
-            private static extern void ZeroMemory(IntPtr handle, uint length);
 
             protected override void DisposeUnmanagedResources()
             {
@@ -284,41 +245,14 @@ namespace Libcuda.Api.Native
                 // I'm cba to embrace the code in a number of try-finallies
                 // so I leave this bugg here
 
-                if (_allocated_maxRegistersPerThread != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_maxRegistersPerThread);
+                if (_infoLogBuffer != IntPtr.Zero)
+                    Marshal.FreeHGlobal(_infoLogBuffer);
 
-                if (_allocated_threadsPerBlock != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_threadsPerBlock);
+                if (_errorLogBuffer != IntPtr.Zero)
+                    Marshal.FreeHGlobal(_errorLogBuffer);
 
-                if (_allocated_wallTime != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_wallTime);
-
-                if (_allocated_infoLogBuffer != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_infoLogBuffer);
-
-                if (_allocated_infoLogBufferSizeBytes != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_infoLogBufferSizeBytes);
-
-                if (_allocated_errorLogBuffer != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_errorLogBuffer);
-
-                if (_allocated_errorLogBufferSizeBytes != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_errorLogBufferSizeBytes);
-
-                if (_allocated_optimizationLevel != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_optimizationLevel);
-
-                if (_allocated_targetFromContext != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_targetFromContext);
-
-                if (_allocated_target != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_target);
-
-                if (_allocated_fallbackStrategy != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_fallbackStrategy);
-
-                if (_allocated_arrayOfOptionValues != IntPtr.Zero)
-                    Marshal.FreeHGlobal(_allocated_arrayOfOptionValues);
+                if (_optionValues != IntPtr.Zero)
+                    Marshal.FreeHGlobal(_optionValues);
             }
 
             #endregion
