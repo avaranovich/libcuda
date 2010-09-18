@@ -8,6 +8,7 @@ using Libcuda.Api.Native.DataTypes;
 using Libcuda.Tracing;
 using XenoGears.Assertions;
 using XenoGears.Functional;
+using XenoGears.Functional.Tuples;
 using XenoGears.Logging;
 using XenoGears.Reflection.Simple;
 using XenoGears.Strings;
@@ -70,20 +71,19 @@ namespace Libcuda.Api.Run
                 gridDim.ToString().Slice(4),
                 new dim3(blockDim.X * gridDim.X, blockDim.Y * gridDim.Y, blockDim.Z * gridDim.Z).ToString().Slice(4));
 
-            var log = new List<ITuple>();
-
+            var log = new List<Object>();
             var offset = 0;
             var sizeInVRAM = 0;
             foreach (var args in Args)
             {
                 var value = args.Get("_value");
-                log.Add(Tuple.New("+" + offset.ToString("0000"), args.Direction, value, args.SizeInVRAM, args.SizeInArgList));
+                log.Add(Tuple.Create("+" + offset.ToString("0000"), args.Direction, value, args.SizeInVRAM, args.SizeInArgList));
                 offset += args.SizeInArgList;
                 sizeInVRAM += args.SizeInVRAM;
             }
-            log.Add(Tuple.New(offset.ToString("0000"), "", "", sizeInVRAM, offset));
+            log.Add(Tuple.Create(offset.ToString("0000"), "", "", sizeInVRAM, offset));
 
-            var formatted = log.Select(t => ((ITuple)t).Items.Select(v => v.ToString()).ToArray()).ToArray();
+            var formatted = log.Select(t => t.TupleItems().Select(v => v.ToString()).ToArray()).ToArray();
             Func<int, String, int, String> pad = (i, text, max) => i < 2 ? text.PadRight(max) : i == 2 ? text.PadRight((int)(max + 1)) : text;
             var padded = formatted.Select(entry => entry.Select((part, i) => pad(i, part, formatted.Max(entry1 => entry1[i].Length)))).ToArray();
 
