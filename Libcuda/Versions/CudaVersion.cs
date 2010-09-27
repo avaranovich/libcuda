@@ -10,5 +10,6 @@ namespace Libcuda.Versions
         CUDA_23 = 2030,
         CUDA_30 = 3000,
         CUDA_31 = 3010,
+        CUDA_32 = 3020,
     }
 }

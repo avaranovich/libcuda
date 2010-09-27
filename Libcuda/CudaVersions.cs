@@ -11,7 +11,7 @@ using XenoGears.Functional;
 
 namespace Libcuda
 {
-    [DebuggerNonUserCode]
+//    [DebuggerNonUserCode]
     public static class CudaVersions
     {
         public static Version Driver
@@ -41,8 +41,11 @@ namespace Libcuda
 
                 var map = new OrderedDictionary<Tuple<CudaVersion, int?>, SoftwareIsa>();
                 Action<CudaVersion, int?, SoftwareIsa> reg = (cuv, drv, isa) => map.Add(Tuple.Create(cuv, drv), isa);
+                Func<CudaVersion, int?, SoftwareIsa, KeyValuePair<Tuple<CudaVersion, int?>, SoftwareIsa>> mk = (v1, t1, isa1) => new KeyValuePair<Tuple<CudaVersion, int?>, SoftwareIsa>(Tuple.Create(v1, t1), isa1);
                 Func<Tuple<CudaVersion, int?>, bool> gte = pair => pair == null || v > pair.Item1 || (v == pair.Item1 && t >= (pair.Item2 ?? 0));
                 Func<Tuple<CudaVersion, int?>, bool> lte = pair => pair == null || v < pair.Item1 || (v == pair.Item1 && t <= (pair.Item2 ?? 0));
+                Func<Tuple<CudaVersion, int?>, bool> gt = pair => !lte(pair);
+                Func<Tuple<CudaVersion, int?>, bool> lt = pair => !gte(pair);
                 reg(CudaVersion.CUDA_10, null, SoftwareIsa.PTX_10);
                 reg(CudaVersion.CUDA_11, null, SoftwareIsa.PTX_11);
                 reg(CudaVersion.CUDA_20, null, SoftwareIsa.PTX_12);
@@ -51,12 +54,13 @@ namespace Libcuda
                 reg(CudaVersion.CUDA_23, 190, SoftwareIsa.PTX_15);
                 reg(CudaVersion.CUDA_30, null, SoftwareIsa.PTX_20);
                 reg(CudaVersion.CUDA_31, null, SoftwareIsa.PTX_21);
+                reg(CudaVersion.CUDA_32, null, SoftwareIsa.PTX_21);
 
                 for (var i = -1; i < map.Count(); ++i)
                 {
-                    var prev = map.NthOrDefault(i);
-                    var next = map.NthOrDefault(i + 1);
-                    if (gte(prev.Key) && lte(next.Key))
+                    var prev = i == -1 ? mk(0, null, SoftwareIsa.PTX_10) : map.Nth(i);
+                    var next = (i + 1) != map.Count() ? map.Nth(i + 1) : mk((CudaVersion)int.MaxValue, null, (SoftwareIsa)int.MaxValue);
+                    if (gte(prev.Key) && lt(next.Key))
                     {
                         return prev.Value;
                     }

@@ -12,12 +12,12 @@ namespace Libcuda.Playground.DevicesAndVersions
     public class Tests : BaseTests
     {
         [Test, Category("Hot")]
-        public void Win7x64_Cuda31_Gtx260()
+        public void Win7x64_Cuda32RC_Gtx260()
         {
             CudaDriver.Ensure();
 
-            (CudaVersions.Driver == new Version("8.17.12.5721")).AssertTrue();
-            (CudaVersions.Cuda == CudaVersion.CUDA_31).AssertTrue();
+            (CudaVersions.Driver == new Version("8.17.12.6061")).AssertTrue();
+            (CudaVersions.Cuda == CudaVersion.CUDA_32).AssertTrue();
             (CudaVersions.SoftwareIsa == SoftwareIsa.PTX_21).AssertTrue();
             (CudaVersions.HardwareIsa == HardwareIsa.SM_13).AssertTrue();
 
