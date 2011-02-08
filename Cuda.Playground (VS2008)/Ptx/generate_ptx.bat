@@ -28,20 +28,20 @@ if "%1"=="" (
     echo [Fatal error] Bitness of the compilation is not specified. Please, provide a single parameter to this batch file - either "32" or "64".
     exit /B 1
 ) else ( if "%1"=="32" (
-    if exist "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" (
-        call "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
-    ) else ( if exist "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat" (
-        call "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\vcvars32.bat"
+    if exist "c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat" (
+        call "c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
+    ) else ( if exist "c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat" (
+        call "c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\vcvars32.bat"
     ) else (
         echo [Fatal error] Cannot find the "vcvars32.bat" file. Possible reason: Microsoft Visual Studio isn't installed.
         @pause
         exit /B 1
     ))
 ) else ( if "%1"=="64" (
-    if exist "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64\vcvars64.bat" (
-        call "c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\amd64\vcvars64.bat"
-    ) else ( if exist "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\amd64\vcvars64.bat" (
-        call "c:\Program Files\Microsoft Visual Studio 10.0\VC\bin\amd64\vcvars64.bat"
+    if exist "c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\amd64\vcvars64.bat" (
+        call "c:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\bin\amd64\vcvars64.bat"
+    ) else ( if exist "c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\amd64\vcvars64.bat" (
+        call "c:\Program Files\Microsoft Visual Studio 9.0\VC\bin\amd64\vcvars64.bat"
     ) else (
         echo [Fatal error] Cannot find the "vcvars64.bat" file. Possible reason: Microsoft Visual Studio isn't installed.
         @pause

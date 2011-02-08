@@ -21,3 +21,5 @@ glob:*.hash
 glob:*.sdf
 glob:*.opensdf
 glob:Libcuda.ncb
+glob:Cuda.Playground.ncb
+glob:*ipch*
